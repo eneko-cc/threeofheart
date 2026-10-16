@@ -80,7 +80,7 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
       <h2 className="sheet-title">Nouvelle idée</h2>
       <div className="cat-grid">
         {CATS.map((k) => (
-          <button key={k.id} className="cat" aria-pressed={k.id === c} style={{ background: k.bg }}
+          <button key={k.id} className="cat" aria-pressed={k.id === c} style={{ background: k.bg, color: k.ink }}
             onClick={() => { setC(k.id); setPicked(false); setPlace(null); setPoster(undefined) }}>
             <CatIcon id={k.id} size={20} />{k.label}
           </button>

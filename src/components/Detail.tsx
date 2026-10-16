@@ -20,7 +20,7 @@ export function Detail({ store, id, onClose, toast, onYesNo }: {
       {item.poster && <img className="poster" src={item.poster} alt="" />}
       <h2 className="sheet-title">{item.title}</h2>
       <div className="meta">
-        <span className="pill" style={{ background: c.bg }}><CatIcon id={item.cat} size={15} />{c.label}</span>
+        <span className="pill" style={{ background: c.bg, color: c.ink }}><CatIcon id={item.cat} size={15} />{c.label}</span>
         {item.where && <span className="pill">{item.where}</span>}
         <span className="pill">Idée de {state.names[item.by]}</span>
       </div>

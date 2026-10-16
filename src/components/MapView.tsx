@@ -12,6 +12,8 @@ import { PlacePhotos } from './PlacePhotos'
 const STYLE = 'https://tiles.openfreemap.org/styles/positron'
 
 function palette() {
+  if (document.documentElement.dataset.design === 'v2')
+    return { land: '#FFE5F1', water: '#F4A9CC', park: '#B9D3BF', road: '#FFFFFF', major: '#FFFFFF', building: '#FAD3E5', text: '#3F6E55' }
   const dark = matchMedia('(prefers-color-scheme: dark)').matches
   return dark
     ? { land: '#14291F', water: '#2B4D66', park: '#1E4434', road: '#1C382C', major: '#24493A', building: '#183326', text: '#86A193' }
@@ -77,12 +79,14 @@ export function MapView({ store, active, onOpen }: { store: Store; active: boole
       attributionControl: { compact: true },
     })
     m.on('style.load', () => recolor(m))
+    const re = () => { if (m.isStyleLoaded()) recolor(m) }
+    window.addEventListener('toh-design', re)
     m.on('error', (e) => { if (String(e.error?.message ?? '').includes('Failed to fetch')) setFailed(true) })
     m.on('click', () => setSel(null))
     const geo = new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false })
     m.addControl(geo, 'bottom-right')
     map.current = m
-    return () => { m.remove(); map.current = null }
+    return () => { window.removeEventListener('toh-design', re); m.remove(); map.current = null }
   }, [])
 
   useEffect(() => {

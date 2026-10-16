@@ -151,7 +151,7 @@ export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
           C'est fait
         </span>
       )}
-      <div ref={card} className="card" style={{ background: c.bg }}>
+      <div ref={card} className="card" style={{ background: c.bg, color: c.ink }}>
         <button className="card-main" onClick={onOpen}>
           <span className="bubble">
             {item.poster ? <img src={item.poster} alt="" loading="lazy" /> : <CatIcon id={item.cat} />}
