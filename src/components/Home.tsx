@@ -1,14 +1,13 @@
-import { CATS, CatIcon, Heart } from '../cats'
+import { CATS, CatIcon } from '../cats'
 import type { Store } from '../store'
 import type { CatId } from '../types'
 import { CountUp, ItemCard } from './ui'
 
-export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
+export function Home({ store, onOpen, onCheck, onCat, onYesNo }: {
   store: Store
   onOpen: (id: string) => void
   onCheck: (id: string, el: HTMLElement) => void
   onCat: (c: CatId) => void
-  onRandom: () => void
   onYesNo: () => void
 }) {
   const { state } = store
@@ -18,23 +17,12 @@ export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
 
   return (
     <div className="page">
-      <h1 className="big brand-title">Threeofheart</h1>
-
-      <section className="hero">
-        <div className="hero-txt">
-          <h2>Ce soir, on fait quoi ?</h2>
-          <p><CountUp value={todo.length} /> idées en attente</p>
-          <div className="hero-btns">
-            <button className="pill-btn" onClick={onRandom}>Tirer au sort</button>
-            <button className="pill-btn light" onClick={onYesNo}>Oui ou non ?</button>
-          </div>
-        </div>
-        <div className="hero-art" aria-hidden="true">
-          <Heart size={70} className="h1" />
-          <Heart size={56} className="h2" />
-          <Heart size={44} className="h3" />
-        </div>
-      </section>
+      <header className="brand-row">
+        <h1 className="big brand-title">Threeofheart</h1>
+        <button className="yn-coin" onClick={onYesNo} aria-label="Oui ou non ?">
+          <span className="yn-face"><b>Oui</b><i>ou</i><b>Non</b></span>
+        </button>
+      </header>
 
       <div className="section-head"><h2>Nos envies</h2></div>
       <div className="bento">

@@ -67,17 +67,12 @@ export default function App() {
     toast("C'est fait !", () => { store.patch(id, { done: false, doneAt: undefined }); setSheet(null) })
     setTimeout(() => setSheet({ kind: 'detail', id }), 380)
   }
-  const random = () => {
-    const pool = store.state.items.filter((i) => !i.done)
-    if (!pool.length) return toast('Plus rien à tirer au sort !')
-    setSheet({ kind: 'detail', id: pool[Math.floor(Math.random() * pool.length)].id })
-  }
 
   return (
     <div className="app">
       <main>
         <ScrollView hidden={tab !== 'home'} title="Threeofheart" dx={dx}>
-          <Home store={store} onOpen={open} onCheck={check} onRandom={random} onYesNo={() => setSheet({ kind: 'yesno' })}
+          <Home store={store} onOpen={open} onCheck={check} onYesNo={() => setSheet({ kind: 'yesno' })}
             onCat={(c) => { setFilter(c); go('list') }} />
         </ScrollView>
         <ScrollView hidden={tab !== 'list'} title="Notre liste" dx={dx}>

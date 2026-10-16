@@ -120,6 +120,20 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .big { font-size: clamp(34px, 10.4vw, 46px); }
 .brand-title { font-size: clamp(40px, 12vw, 54px); margin-top: 10px; }
 
+/* titre + pièce Oui / Non */
+.brand-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.brand-row .brand-title { margin: 0; font-size: clamp(34px, 10.2vw, 46px) !important; }
+.yn-coin { flex: none; width: 58px; height: 58px; border-radius: 50%; padding: 3px; background: var(--surface);
+  box-shadow: 0 8px 18px -8px rgba(59, 15, 34, 0.45), inset 0 0 0 2px var(--line); transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.yn-coin:active { transform: scale(0.9) rotate(-12deg); }
+.yn-face { position: relative; display: block; width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(135deg, var(--w-yes) 50%, var(--w-no) 50%); animation: coin-wobble 5s ease-in-out 1.2s infinite; }
+.yn-face b { position: absolute; font-size: 11px; font-weight: 800; line-height: 1; }
+.yn-face b:first-child { color: var(--w-yes-ink); top: 13px; left: 9px; }
+.yn-face b:last-child { color: var(--w-no-ink); bottom: 13px; right: 7px; }
+.yn-face i { display: none; }
+@keyframes coin-wobble { 0%, 86%, 100% { transform: none; } 90% { transform: rotate(-14deg); } 94% { transform: rotate(10deg); } 97% { transform: rotate(-4deg); } }
+
 /* carte « ce soir » */
 .hero {
   position: relative; overflow: hidden; border-radius: 30px; padding: 22px 20px;
