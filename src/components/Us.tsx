@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cat, Heart } from '../cats'
 import { avg, type Store } from '../store'
 import type { AppState } from '../types'
@@ -89,6 +89,7 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
         <button className="secondary" onClick={() => file.current?.click()}>Importer</button>
         <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => importData(e.target.files?.[0])} />
       </div>
+      <ScreenInfo />
       {!store.session && <p className="note">Tant que tu n'es pas connecté, vos idées restent sur ce téléphone.</p>}
     </div>
   )
@@ -129,4 +130,19 @@ function SyncBox({ store }: { store: Store }) {
       <button className="primary" disabled={busy}>{busy ? 'Connexion…' : 'Se connecter'}</button>
     </form>
   )
+}
+
+/** Petite ligne de mesure pour régler l'affichage sur chaque iPhone. */
+function ScreenInfo() {
+  const [t, setT] = useState('')
+  useEffect(() => {
+    const probe = document.createElement('div')
+    probe.style.cssText = 'position:fixed;top:0;left:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);visibility:hidden'
+    document.body.appendChild(probe)
+    const cs = getComputedStyle(probe)
+    const app = (navigator as { standalone?: boolean }).standalone || matchMedia('(display-mode: standalone)').matches
+    setT(`${app ? 'app' : 'safari'} · fenêtre ${innerWidth}×${innerHeight} · écran ${screen.width}×${screen.height} · page ${Math.round(document.body.getBoundingClientRect().height)} · marges ${parseInt(cs.paddingTop)}/${parseInt(cs.paddingBottom)}`)
+    probe.remove()
+  }, [])
+  return <p className="screen-info">{t}</p>
 }

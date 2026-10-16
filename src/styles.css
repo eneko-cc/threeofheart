@@ -59,6 +59,8 @@
 html, body, #root { height: 100%; margin: 0; }
 /* le document ne défile jamais : seules les vues défilent (évite le décalage en haut sur iPhone) */
 html, body { position: fixed; top: 0; left: 0; width: 100%; height: var(--app-h, 100%); overflow: hidden; overscroll-behavior: none; }
+@media (display-mode: standalone) { html, body { height: max(var(--app-h, 100%), 100lvh); } }
+.screen-info { font-size: 11px; color: var(--muted); text-align: center; opacity: 0.7; margin: 0; }
 html { background: var(--bg); }
 /* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--band); z-index: 15; pointer-events: none; }
