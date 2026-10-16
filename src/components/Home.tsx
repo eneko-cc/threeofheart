@@ -1,7 +1,7 @@
 import { CATS, CatIcon, Heart } from '../cats'
 import type { Store } from '../store'
 import type { CatId } from '../types'
-import { ItemCard } from './ui'
+import { CountUp, ItemCard } from './ui'
 
 const today = () => {
   const s = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -35,7 +35,7 @@ export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
       <section className="hero">
         <div className="hero-txt">
           <h2>Ce soir, on fait quoi ?</h2>
-          <p>{todo.length} idées en attente</p>
+          <p><CountUp value={todo.length} /> idées en attente</p>
           <div className="hero-btns">
             <button className="pill-btn" onClick={onRandom}>Tirer au sort</button>
             <button className="pill-btn light" onClick={onYesNo}>Oui ou non ?</button>
@@ -53,7 +53,7 @@ export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
         {CATS.map((c, k) => (
           <button key={c.id} className={'tile' + (k === 0 ? ' tall' : k === CATS.length - 1 ? ' wide' : '')} style={{ background: c.bg, animationDelay: `${k * 40}ms` }}
             onClick={() => onCat(c.id)}>
-            <span className="tag">{count(c.id)} à faire</span>
+            <span className="tag"><CountUp value={count(c.id)} /> à faire</span>
             <span className="tile-ic"><CatIcon id={c.id} size={k === 0 ? 30 : 22} /></span>
             <span className="tile-name">{c.plural}</span>
           </button>

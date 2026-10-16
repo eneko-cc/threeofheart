@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { cat, Heart } from '../cats'
 import { avg, type Store } from '../store'
+import { CountUp } from './ui'
 
 export function Us({ store, toast }: { store: Store; toast: (m: string) => void }) {
   const { state, setNames, setMe, clearExamples } = store
@@ -18,9 +19,9 @@ export function Us({ store, toast }: { store: Store; toast: (m: string) => void 
         <span className="av big b">{state.names.b[0]}</span>
       </div>
       <div className="stats">
-        <div className="stat" style={{ background: 'var(--c-pink)' }}><b>{state.items.length - done.length}</b><span>à faire</span></div>
-        <div className="stat" style={{ background: 'var(--c-blue)' }}><b>{done.length}</b><span>faits</span></div>
-        <div className="stat" style={{ background: 'var(--c-mint)' }}><b>{rated.length ? (rated.reduce((a, b) => a + b, 0) / rated.length).toFixed(1) : '–'}</b><span>cœurs en moy.</span></div>
+        <div className="stat" style={{ background: 'var(--c-pink)' }}><b><CountUp value={state.items.length - done.length} /></b><span>à faire</span></div>
+        <div className="stat" style={{ background: 'var(--c-blue)' }}><b><CountUp value={done.length} /></b><span>faits</span></div>
+        <div className="stat" style={{ background: 'var(--c-mint)' }}><b>{rated.length ? <CountUp value={rated.reduce((a, b) => a + b, 0) / rated.length} decimals={1} /> : '–'}</b><span>cœurs en moy.</span></div>
       </div>
       {best && avg(best) > 0 && (
         <div className="best" style={{ background: cat(best.cat).bg }}>

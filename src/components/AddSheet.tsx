@@ -16,6 +16,7 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
   const [sugg, setSugg] = useState<Suggestion[]>([])
   const [picked, setPicked] = useState(false)
   const [offline, setOffline] = useState(false)
+  const [saved, setSaved] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const meta = cat(c)
 
@@ -67,8 +68,8 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
       ...(meta.place && place ? { lat: place.lat, lng: place.lng, address: place.address } : {}),
       ...(poster && !meta.place ? { poster } : {}),
     }
-    store.upsert(item)
-    onDone(item)
+    setSaved(true)
+    setTimeout(() => { store.upsert(item); onDone(item) }, 520)
   }
 
   const whereLabel = meta.place ? 'Quartier' : c === 'todo' ? 'Quand ?' : 'Où le regarder ?'
@@ -117,7 +118,11 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
         <label htmlFor="f-note">Un petit mot</label>
         <textarea id="f-note" placeholder="Pourquoi ça nous tente" value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
-      <button className="primary" disabled={!title.trim()} onClick={save}>Ajouter à notre liste</button>
+      <button className={'primary' + (saved ? ' saved' : '')} disabled={!title.trim() || saved} onClick={save}>
+        {saved ? (
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round" aria-label="Ajouté"><path className="draw" d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+        ) : 'Ajouter à notre liste'}
+      </button>
     </div>
   )
 }
