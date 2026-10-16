@@ -63,6 +63,9 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
         </div>
       )}
 
+      <div className="section-head"><h2>Synchro</h2></div>
+      <SyncBox store={store} />
+
       <div className="section-head"><h2>Style de l'app</h2></div>
       <div className="design-pick">
         <button aria-pressed={design === 'v1'} onClick={() => pick('v1')}>
@@ -99,9 +102,44 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
         <button className="secondary" onClick={() => file.current?.click()}>Importer</button>
         <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => importData(e.target.files?.[0])} />
       </div>
-      <p className="note">
-        Pour l'instant, vos idées restent sur ce téléphone. La synchro entre vos deux téléphones arrive bientôt.
-      </p>
+      {!store.session && <p className="note">Tant que tu n'es pas connecté, vos idées restent sur ce téléphone.</p>}
     </div>
+  )
+}
+
+const STATUS = { off: '', syncing: 'Synchronisation…', ok: 'Synchronisé', offline: 'Hors ligne, ça partira dès que possible' }
+
+function SyncBox({ store }: { store: Store }) {
+  const { session, sync, signIn, signOut } = store
+  const [email, setEmail] = useState('')
+  const [pw, setPw] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  if (session) {
+    return (
+      <div className="sync on">
+        <span className={'sync-dot ' + sync} aria-hidden="true" />
+        <span className="sync-txt"><b>{STATUS[sync] || 'Connecté'}</b><small>{session.user.email}</small></span>
+        <button className="ghost" onClick={signOut}>Déconnexion</button>
+      </div>
+    )
+  }
+  const go = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setBusy(true); setErr('')
+    try { await signIn(email, pw) } catch (x) {
+      setErr(/invalid/i.test(String((x as Error).message)) ? 'E-mail ou mot de passe incorrect' : 'Connexion impossible, vérifie le réseau')
+    }
+    setBusy(false)
+  }
+  return (
+    <form className="sync" onSubmit={go}>
+      <p className="sync-lead">Connecte-toi pour partager la même liste sur vos deux téléphones.</p>
+      <input type="email" autoComplete="username" inputMode="email" placeholder="Ton e-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <input type="password" autoComplete="current-password" placeholder="Mot de passe" value={pw} onChange={(e) => setPw(e.target.value)} required />
+      {err && <p className="hint">{err}</p>}
+      <button className="primary" disabled={busy}>{busy ? 'Connexion…' : 'Se connecter'}</button>
+    </form>
   )
 }

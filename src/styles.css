@@ -341,6 +341,18 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .toast svg { color: var(--toast-heart); }
 .toast.undo.on { pointer-events: auto; padding-right: 6px; }
 .toast-undo { margin-left: 6px; padding: 8px 14px; min-height: 36px; border-radius: 99px; background: rgba(255, 255, 255, 0.16); color: inherit; font-weight: 700; }
+.sync { background: var(--surface); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); }
+.sync.on { flex-direction: row; align-items: center; gap: 12px; }
+.sync input { width: 100%; border: 1.5px solid var(--line); background: var(--bg); border-radius: 14px; padding: 13px 14px; font: inherit; color: var(--fg); }
+.sync .primary { margin: 0; }
+.sync-lead { margin: 0; font-weight: 500; color: var(--muted); }
+.sync-txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sync-txt small { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.sync .ghost { margin: 0; padding: 10px 6px; }
+.sync-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--muted); flex: none; }
+.sync-dot.ok { background: #72BA2C; box-shadow: 0 0 0 4px rgba(114, 186, 44, 0.2); }
+.sync-dot.syncing { background: #FCCC60; animation: beat 0.9s ease-in-out infinite; }
+.sync-dot.offline { background: #FA610E; }
 .detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 /* zones tactiles d'au moins 44 points, sans changer le dessin */
 .check { position: relative; }
