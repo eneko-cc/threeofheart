@@ -6,7 +6,7 @@ import { CountUp } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
 
 export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: () => void) => void }) {
-  const { state, setNames, setMe, clearExamples, replaceAll } = store
+  const { state, setNames, clearExamples, replaceAll } = store
   const file = useRef<HTMLInputElement>(null)
 
   /** Sauvegarde de toutes nos idées dans un fichier, à garder dans Fichiers ou à s'envoyer. */
@@ -76,13 +76,6 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
           <span className="swatches"><i style={{ background: '#DE3566' }} /><i style={{ background: '#FCCC60' }} /><i style={{ background: '#72BA2C' }} /><i style={{ background: '#FF9B3D' }} /></span>
           Palette de Ju
         </button>
-      </div>
-
-      <div className="section-head"><h2>Ce téléphone est à</h2></div>
-      <div className={'seg' + (state.me === 'b' ? ' right' : '')}>
-        <span className="knob" />
-        <button aria-pressed={state.me === 'a'} onClick={() => setMe('a')}>{state.names.a}</button>
-        <button aria-pressed={state.me === 'b'} onClick={() => setMe('b')}>{state.names.b}</button>
       </div>
 
       <div className="section-head"><h2>Prénoms</h2></div>

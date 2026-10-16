@@ -13,6 +13,18 @@ export const sb = createClient(URL, KEY, {
 
 export type { Session }
 
+// Qui est qui, d'après l'e-mail de connexion. On garde seulement l'empreinte des e-mails (le code est public).
+const WHO: Record<string, 'a' | 'b'> = {
+  '161bd3b1c1c1088c7c15974eb3b89843d51c2364bb579619d282c9817f59d633': 'a', // Toni
+  '11b74278aca3746f028b5e64c76e81848db2005abdc2b95615dbb1e923af6b41': 'b', // Ju
+}
+export async function whoIs(email: string): Promise<'a' | 'b' | undefined> {
+  try {
+    const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email.trim().toLowerCase()))
+    return WHO[[...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, '0')).join('')]
+  } catch { return undefined }
+}
+
 export interface Row { id: string; data: Item; deleted: boolean; updated_at?: string }
 export interface SettingRow { key: string; value: unknown }
 

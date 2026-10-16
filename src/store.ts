@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchAll, pushItems, pushSetting, readPending, sb, writePending, type Row, type Session } from './sync'
+import { fetchAll, pushItems, pushSetting, readPending, sb, whoIs, writePending, type Row, type Session } from './sync'
 import type { AppState, Item } from './types'
 import importData from './data/import.json'
 
@@ -102,7 +102,7 @@ export function useStore() {
     ;(async () => {
       setSync('syncing')
       try {
-        const remote = await fetchAll()
+        const [remote, who] = await Promise.all([fetchAll(), whoIs(email)])
         if (!alive) return
         const pending = readPending()
         const m = new Map<string, string>()
@@ -127,7 +127,10 @@ export function useStore() {
           // qui est qui : la première personne connectée sur un rond le garde
           const people = (remote.settings.find((r) => r.key === 'people')?.value ?? {}) as { a?: string; b?: string }
           let me = s.me
-          if (people.a === email) me = 'a'
+          if (who) {
+            me = who
+            if (people[who] !== email) pushSetting('people', { ...people, [who]: email }).catch(() => {})
+          } else if (people.a === email) me = 'a'
           else if (people.b === email) me = 'b'
           else {
             me = !people.a && !(s.me === 'b' && !people.b) ? 'a' : !people.b ? 'b' : s.me

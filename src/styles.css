@@ -18,7 +18,7 @@
   --card-ink: #16302A;
   --shadow: 0 12px 30px -14px rgba(31, 77, 58, 0.3);
   --font: 'Outfit', ui-rounded, system-ui, -apple-system, sans-serif;
-  --nav-h: 68px;
+  --nav-h: clamp(64px, 17.4vw, 76px);
   --font-display: var(--font);
   --display-style: normal;
   --font-label: var(--font);
@@ -58,7 +58,7 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 /* le document ne défile jamais : seules les vues défilent (évite le décalage en haut sur iPhone) */
-html, body { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: none; }
+html, body { position: fixed; top: 0; left: 0; width: 100%; height: var(--app-h, 100%); overflow: hidden; overscroll-behavior: none; }
 html { background: var(--bg); }
 /* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--band); z-index: 15; pointer-events: none; }
@@ -111,7 +111,8 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .big { transform: translateY(calc(var(--sy, 0) * 0.3px)); opacity: calc(1 - var(--sy, 0) / 150); transform-origin: 0 100%;
   font-size: 40px; line-height: 1.02; font-weight: 800; letter-spacing: -0.03em; margin: 2px 0 4px; text-wrap: balance; }
 .big.small { font-size: 34px; }
-.brand-title { font-size: 44px; margin-top: 10px; }
+.big { font-size: clamp(34px, 10.4vw, 46px); }
+.brand-title { font-size: clamp(40px, 12vw, 54px); margin-top: 10px; }
 
 /* carte « ce soir » */
 .hero {
@@ -139,7 +140,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 /* grille de catégories */
 .bento { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tile {
-  border-radius: 24px; padding: 14px; min-height: 108px; display: flex; flex-direction: column; justify-content: space-between;
+  border-radius: 24px; padding: 14px; min-height: clamp(100px, 28vw, 128px); display: flex; flex-direction: column; justify-content: space-between;
   align-items: flex-start; text-align: left; color: var(--card-ink); position: relative;
   animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) both; transition: transform 0.15s;
 }
@@ -150,8 +151,8 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .tile.wide { grid-column: span 2; min-height: 84px; }
 .tile-ic { position: absolute; right: 14px; top: 14px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.65); display: grid; place-items: center; }
 .tile.tall .tile-ic { width: 64px; height: 64px; top: auto; bottom: 52px; }
-.tile-name { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
-.tile.tall .tile-name { font-size: 26px; }
+.tile-name { font-weight: 700; font-size: clamp(19px, 5.4vw, 23px); letter-spacing: -0.01em; }
+.tile.tall .tile-name { font-size: clamp(25px, 7vw, 30px); }
 .tag { font-size: 12px; font-weight: 600; background: rgba(255, 255, 255, 0.7); color: var(--card-ink); padding: 5px 10px; border-radius: 99px; }
 
 /* cartes d'idées */
@@ -463,9 +464,9 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --bg-todo: #BAC664;     --ink-todo: #2F3510;
   --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-done: #3B0F22;
 }
-:root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: 48px; letter-spacing: -0.01em; color: #DE3566; }
+:root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: clamp(42px, 12.6vw, 56px); letter-spacing: -0.01em; color: #DE3566; }
 :root[data-design='v2'] .big { font-weight: 800; }
-:root[data-design='v2'] .hero h2 { font-size: 28px; font-weight: 800; }
+:root[data-design='v2'] .hero h2 { font-size: clamp(25px, 7.4vw, 32px); font-weight: 800; }
 :root[data-design='v2'] .hero p { opacity: 0.85; }
 :root[data-design='v2'] .tile-name { font-weight: 800; }
 :root[data-design='v2'] .card-title { font-weight: 700; }
