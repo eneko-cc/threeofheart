@@ -76,7 +76,14 @@ export function MapView({ store, active, onOpen }: { store: Store; active: boole
       style: STYLE,
       center: [2.3488, 48.8634],
       zoom: 12.2,
-      attributionControl: { compact: true },
+      attributionControl: false,
+    })
+    // Crédits OpenStreetMap obligatoires : réduits à un petit « i » discret, repliés dès le départ.
+    m.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left')
+    m.once('load', () => {
+      const a = box.current?.querySelector('.maplibregl-ctrl-attrib')
+      a?.classList.remove('maplibregl-compact-show')
+      a?.removeAttribute('open')
     })
     m.on('style.load', () => recolor(m))
     const re = () => { if (m.isStyleLoaded()) recolor(m) }
