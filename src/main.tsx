@@ -7,8 +7,29 @@ import { registerSW } from 'virtual:pwa-register'
 
 applyDesign()
 
-// Barre d'état iOS en mode « default » : l'app commence sous l'heure et occupe exactement le reste
-// de l'écran. (En mode translucide, iOS 26 annonce une fenêtre trop courte et coupe le bas.)
+// Plein écran iPhone. Sur iOS 26, l'app installée affiche une zone plus courte que l'écran
+// (il manque la hauteur de la barre de l'heure en bas, tout ce qui dépasse est coupé).
+// On cale donc l'app sur la zone vraiment affichée, et dans ce cas la marge du bas n'est plus utile.
+const standalone = matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone
+const fit = () => {
+  if (!standalone) return
+  const root = document.documentElement
+  const probe = document.createElement('div')
+  probe.style.cssText = 'position:fixed;top:0;padding-top:env(safe-area-inset-top);visibility:hidden'
+  document.body.appendChild(probe)
+  const top = parseFloat(getComputedStyle(probe).paddingTop) || 0
+  probe.remove()
+  const h = window.innerHeight
+  const short = top > 0 && screen.height - h > 20
+  root.style.setProperty('--app-h', `${h}px`)
+  root.classList.toggle('ios-short', short)
+  if (short) root.style.setProperty('--sab', '6px')
+  else root.style.removeProperty('--sab')
+}
+fit()
+setTimeout(fit, 400)
+window.addEventListener('pageshow', fit)
+window.addEventListener('orientationchange', () => setTimeout(fit, 300))
 
 // Nouvelle version en ligne : elle s'installe et l'app se recharge toute seule, on vérifie à chaque retour dans l'app.
 const update = registerSW({

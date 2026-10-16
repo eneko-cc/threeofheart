@@ -58,15 +58,16 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 /* le document ne défile jamais : seules les vues défilent (évite le décalage en haut sur iPhone) */
-html, body { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: none; }
+html, body { position: fixed; top: 0; left: 0; width: 100%; height: var(--app-h, 100%); overflow: hidden; overscroll-behavior: none; }
+:root { --sab: env(safe-area-inset-bottom, 0px); }
 .screen-info { font-size: 11px; color: var(--muted); text-align: center; opacity: 0.7; margin: 0; }
 html { background: var(--bg); }
 /* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--band); z-index: 15; pointer-events: none; }
-/* app installée : la barre de l'heure d'iOS est blanche, on fond le haut de l'app dans ce blanc */
-@media (display-mode: standalone) {
-  body::before { height: 34px; background: linear-gradient(#FFFFFF, color-mix(in srgb, #FFFFFF 55%, transparent) 45%, transparent); }
-}
+/* iOS 26 : sous la zone affichée il reste une bande vide, le contenu s'y fond au lieu d'être coupé net */
+html.ios-short .app::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: linear-gradient(transparent, var(--bg)); z-index: 9; pointer-events: none; }
+/* la bande de l'heure se fond doucement dans l'app */
+body::before { height: calc(env(safe-area-inset-top, 0px) + 14px); background: linear-gradient(var(--band) calc(100% - 14px), transparent); }
 .rotate { display: none; }
 @media (orientation: landscape) and (max-height: 520px) {
   .rotate { display: flex; position: fixed; inset: 0; z-index: 200; background: #16302A; color: #FFF7F9; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
@@ -100,7 +101,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 .page {
-  padding: calc(env(safe-area-inset-top, 0px) + 18px) max(18px, env(safe-area-inset-right, 0px)) calc(var(--nav-h) + 48px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) max(18px, env(safe-area-inset-right, 0px)) calc(var(--nav-h) + 48px + var(--sab)) max(18px, env(safe-area-inset-left, 0px));
   display: flex; flex-direction: column; gap: 14px;
 }
 
@@ -235,15 +236,15 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .pin svg { width: 100%; height: 100%; display: block; }
 @keyframes drop { from { opacity: 0; transform: translateY(-36px); } to { opacity: 1; transform: none; } }
 .peek {
-  position: absolute; left: 14px; right: 14px; bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom, 0px)); z-index: 3;
+  position: absolute; left: 14px; right: 14px; bottom: calc(var(--nav-h) + 30px + var(--sab)); z-index: 3;
   transform: translateY(30px); opacity: 0; pointer-events: none; transition: transform 0.4s cubic-bezier(0.3, 1.4, 0.5, 1), opacity 0.2s;
 }
 .peek.on { transform: none; opacity: 1; pointer-events: auto; }
 .peek .card { box-shadow: var(--shadow); animation: none; }
-.maplibregl-ctrl-bottom-right { bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom, 0px)); }
+.maplibregl-ctrl-bottom-right { bottom: calc(var(--nav-h) + 30px + var(--sab)); }
 .maplibregl-ctrl-group { border-radius: 50% !important; box-shadow: var(--shadow) !important; }
 .maplibregl-ctrl-group button { width: 44px !important; height: 44px !important; }
-.maplibregl-ctrl-bottom-left { bottom: calc(var(--nav-h) + 34px + env(safe-area-inset-bottom, 0px)); }
+.maplibregl-ctrl-bottom-left { bottom: calc(var(--nav-h) + 34px + var(--sab)); }
 .maplibregl-ctrl-attrib { font-size: 10px; }
 /* crédits de la carte camouflés : un petit rond « i » à peine visible, qui s'ouvre si on le touche */
 .maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact { margin: 0 0 0 12px !important; background: rgba(255, 255, 255, 0.5); opacity: 0.4; }
@@ -268,7 +269,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 /* barre de navigation */
 .tabs {
   position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px));
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px)); height: var(--nav-h); z-index: 10;
+  bottom: calc(12px + var(--sab)); height: var(--nav-h); z-index: 10;
   display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 0 8px;
   background: var(--nav); border-radius: 99px; box-shadow: 0 14px 30px -10px rgba(22, 48, 42, 0.55);
 }
@@ -288,7 +289,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .sheet {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-width: 560px; margin: 0 auto; max-height: 90%; overflow-y: auto;
   background: var(--bg); border-radius: 32px 32px 0 0;
-  padding: 10px max(18px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  padding: 10px max(18px, env(safe-area-inset-right, 0px)) calc(24px + var(--sab)) max(18px, env(safe-area-inset-left, 0px));
   transform: translateY(105%); transition: transform 0.5s cubic-bezier(0.3, 1.2, 0.5, 1);
 }
 .sheet.on { transform: none; }
@@ -339,7 +340,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .burst svg { position: absolute; width: 22px; height: 22px; animation: fly 1.1s cubic-bezier(0.2, 0.7, 0.4, 1) forwards; }
 @keyframes fly { from { transform: translate(0, 0) scale(0.3); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(1.1) rotate(var(--r)); opacity: 0; } }
 .toast {
-  position: fixed; left: 50%; bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  position: fixed; left: 50%; bottom: calc(var(--nav-h) + 30px + var(--sab)); z-index: 30;
   transform: translate(-50%, 20px); opacity: 0; background: var(--toast); color: var(--toast-ink); font-weight: 600; padding: 12px 20px;
   border-radius: 99px; transition: 0.35s cubic-bezier(0.3, 1.5, 0.5, 1); white-space: nowrap; pointer-events: none;
   display: flex; align-items: center; gap: 8px;
