@@ -82,11 +82,13 @@ main { position: absolute; inset: 0; }
   background: var(--c-lilac); color: var(--card-ink); display: flex; min-height: 168px;
   animation: pop 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
 }
-.hero-txt { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; max-width: 62%; }
+.hero-txt { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; max-width: 66%; }
 .hero h2 { font-size: 27px; line-height: 1.05; margin: 0; font-weight: 700; letter-spacing: -0.02em; }
 .hero p { margin: 0 0 8px; font-weight: 500; opacity: 0.75; font-size: 14px; }
 .pill-btn { align-self: flex-start; background: #16302A; color: #fff; font-weight: 600; padding: 11px 18px; border-radius: 99px; transition: transform 0.15s; }
 .pill-btn:active { transform: scale(0.94); }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill-btn.light { background: rgba(255, 255, 255, 0.75); color: #16302A; }
 .hero-art { position: absolute; right: -6px; top: 10px; width: 150px; height: 150px; }
 .hero-art svg { position: absolute; filter: drop-shadow(0 10px 10px rgba(22, 48, 42, 0.18)); animation: float 4s ease-in-out infinite; }
 .hero-art .h1 { color: #F4A3BA; right: 30px; top: 12px; }
@@ -161,7 +163,13 @@ main { position: absolute; inset: 0; }
 .map-top > * { pointer-events: auto; }
 .map-top .chips { margin: 0; }
 .map-top .chip { box-shadow: var(--shadow); }
-.map-top .ghosty { align-self: flex-start; margin-left: 18px; font-size: 13px; }
+.status { align-self: flex-start; margin-left: 18px; display: flex; gap: 2px; background: var(--surface); border-radius: 99px; padding: 4px; box-shadow: var(--shadow); }
+.status button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 99px; font-weight: 600; font-size: 13px; color: var(--muted); transition: background 0.25s, color 0.25s; }
+.status button[aria-pressed='true'] { background: var(--fir); color: var(--fir-ink); }
+.lg { width: 14px; height: 14px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); flex: none; }
+.lg.heart { background: #E58AA5; }
+.lg.check { background: #1F4D3A; box-shadow: 0 0 0 1.5px #fff; }
+.pin.done { width: 32px; height: 39px; }
 .map-msg { position: absolute; left: 18px; right: 18px; top: 45%; text-align: center; background: var(--surface); border-radius: 18px; padding: 14px; font-weight: 600; box-shadow: var(--shadow); }
 .pin { width: 38px; height: 46px; cursor: pointer; }
 .pin-in { display: block; width: 100%; height: 100%; animation: drop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) both; filter: drop-shadow(0 6px 5px rgba(31, 77, 58, 0.3)); transition: transform 0.25s cubic-bezier(0.3, 1.8, 0.5, 1); transform-origin: bottom center; }
@@ -265,6 +273,21 @@ main { position: absolute; inset: 0; }
   border-radius: 99px; transition: 0.35s cubic-bezier(0.3, 1.5, 0.5, 1); white-space: nowrap; pointer-events: none;
 }
 .toast.on { transform: translate(-50%, 0); opacity: 1; }
+
+/* oui ou non */
+.coin-wrap { display: grid; place-items: center; padding: 18px 0 22px; perspective: 800px; }
+.coin {
+  width: 190px; height: 190px; border-radius: 50%; background: var(--c-lilac); color: #16302A; font-weight: 800; font-size: 40px;
+  letter-spacing: -0.02em; box-shadow: 0 18px 30px -14px rgba(31, 77, 58, 0.45), inset 0 -8px 0 rgba(22, 48, 42, 0.08);
+  transition: background 0.4s, transform 0.3s; display: grid; place-items: center; padding: 18px; text-wrap: balance;
+}
+.coin:active { transform: scale(0.95); }
+.coin.spin { animation: flip 1.3s cubic-bezier(0.3, 0.1, 0.3, 1) both; }
+.coin.yes { background: var(--c-mint); animation: land 0.5s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+.coin.no { background: var(--c-pink); animation: land 0.5s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+@keyframes flip { from { transform: rotateY(0) scale(1); } 50% { transform: rotateY(900deg) scale(1.12); } to { transform: rotateY(1800deg) scale(1); } }
+@keyframes land { from { transform: scale(0.7); } to { transform: none; } }
+.yn-q { text-align: center; color: var(--muted); font-weight: 500; margin: -8px 0 16px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

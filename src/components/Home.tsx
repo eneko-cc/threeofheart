@@ -8,12 +8,13 @@ const today = () => {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-export function Home({ store, onOpen, onCheck, onCat, onRandom }: {
+export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
   store: Store
   onOpen: (id: string) => void
   onCheck: (id: string, el: HTMLElement) => void
   onCat: (c: CatId) => void
   onRandom: () => void
+  onYesNo: () => void
 }) {
   const { state } = store
   const todo = state.items.filter((i) => !i.done)
@@ -33,9 +34,12 @@ export function Home({ store, onOpen, onCheck, onCat, onRandom }: {
 
       <section className="hero">
         <div className="hero-txt">
-          <h2>Ce soir, on fait quoi ?</h2>
+          <h2>Ce soir, on fait quoi ?</h2>
           <p>{todo.length} idées en attente</p>
-          <button className="pill-btn" onClick={onRandom}>Tirer au sort</button>
+          <div className="hero-btns">
+            <button className="pill-btn" onClick={onRandom}>Tirer au sort</button>
+            <button className="pill-btn light" onClick={onYesNo}>Oui ou non ?</button>
+          </div>
         </div>
         <div className="hero-art" aria-hidden="true">
           <Heart size={70} className="h1" />

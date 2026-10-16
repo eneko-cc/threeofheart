@@ -7,10 +7,11 @@ import { MapView } from './components/MapView'
 import { AddSheet } from './components/AddSheet'
 import { Detail } from './components/Detail'
 import { Us } from './components/Us'
+import { YesNo } from './components/YesNo'
 import { burst, Sheet } from './components/ui'
 
 type Tab = 'home' | 'list' | 'map' | 'us'
-type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'detail'; id: string } | null
+type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'detail'; id: string } | { kind: 'yesno'; q?: string } | null
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'home', label: 'Accueil', icon: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>' },
@@ -49,7 +50,7 @@ export default function App() {
     <div className="app">
       <main>
         <section className="view" hidden={tab !== 'home'}>
-          <Home store={store} onOpen={open} onCheck={check} onRandom={random}
+          <Home store={store} onOpen={open} onCheck={check} onRandom={random} onYesNo={() => setSheet({ kind: 'yesno' })}
             onCat={(c) => { setFilter(c); setTab('list') }} />
         </section>
         <section className="view" hidden={tab !== 'list'}>
@@ -77,7 +78,9 @@ export default function App() {
           <AddSheet store={store} initialCat={sheet.cat}
             onDone={(it) => { close(); toast(it.lat != null ? 'Ajouté et épinglé sur la carte' : 'Ajouté à notre liste') }} />
         )}
-        {sheet?.kind === 'detail' && <Detail key={sheet.id} store={store} id={sheet.id} onClose={close} toast={toast} />}
+        {sheet?.kind === 'detail' && <Detail key={sheet.id} store={store} id={sheet.id} onClose={close} toast={toast}
+          onYesNo={(q) => setSheet({ kind: 'yesno', q })} />}
+        {sheet?.kind === 'yesno' && <YesNo question={sheet.q} />}
       </Sheet>
       <div className={'toast' + (msg ? ' on' : '')} role="status">{msg}</div>
     </div>

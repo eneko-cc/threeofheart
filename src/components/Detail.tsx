@@ -4,7 +4,9 @@ import { avg, type Store } from '../store'
 import { directionsUrl } from '../search'
 import { burst, Hearts } from './ui'
 
-export function Detail({ store, id, onClose, toast }: { store: Store; id: string; onClose: () => void; toast: (m: string) => void }) {
+export function Detail({ store, id, onClose, toast, onYesNo }: {
+  store: Store; id: string; onClose: () => void; toast: (m: string) => void; onYesNo: (q: string) => void
+}) {
   const { state, patch, remove } = store
   const item = state.items.find((i) => i.id === id)
   const [sure, setSure] = useState(false)
@@ -41,6 +43,7 @@ export function Detail({ store, id, onClose, toast }: { store: Store; id: string
           C'est fait !
         </button>
       )}
+      {!item.done && <button className="ghost" onClick={() => onYesNo(`On fait « ${item.title} » ?`)}>On hésite ? Oui ou non</button>}
       <button className="ghost danger" onClick={() => { if (sure) { remove(id); onClose(); toast('Supprimé') } else setSure(true) }}>
         {sure ? 'Appuie encore pour supprimer' : 'Supprimer'}
       </button>
