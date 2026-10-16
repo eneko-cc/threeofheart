@@ -58,7 +58,9 @@ export function useStore() {
   const setNames = useCallback((names: AppState['names']) => setState((s) => ({ ...s, names })), [])
   const setMe = useCallback((me: AppState['me']) => setState((s) => ({ ...s, me })), [])
 
-  return { state, upsert, patch, remove, clearExamples, setNames, setMe }
+  const replaceAll = useCallback((next: AppState) => setState({ ...initial(), ...next, v: DATA_VERSION }), [])
+
+  return { state, upsert, patch, remove, clearExamples, setNames, setMe, replaceAll }
 }
 
 export type Store = ReturnType<typeof useStore>

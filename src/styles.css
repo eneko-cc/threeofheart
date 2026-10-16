@@ -322,7 +322,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .rate { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface); border-radius: 20px; padding: 10px 12px 10px 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
 .rate b { font-weight: 600; font-size: 17px; }
 .hrow { display: flex; }
-.hrow button { width: 38px; height: 38px; display: grid; place-items: center; color: var(--line); transition: transform 0.25s cubic-bezier(0.3, 1.8, 0.5, 1), color 0.2s; }
+.hrow button { width: 44px; height: 44px; display: grid; place-items: center; color: var(--line); transition: transform 0.25s cubic-bezier(0.3, 1.8, 0.5, 1), color 0.2s; }
 .hrow button.on { color: var(--accent); animation: hpop 0.45s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
 @keyframes hpop { from { transform: scale(0.4) rotate(-12deg); } to { transform: none; } }
 .hrow button:active { transform: scale(1.4); }
@@ -339,6 +339,12 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
   display: flex; align-items: center; gap: 8px;
 }
 .toast svg { color: var(--toast-heart); }
+.toast.undo.on { pointer-events: auto; padding-right: 6px; }
+.toast-undo { margin-left: 6px; padding: 8px 14px; min-height: 36px; border-radius: 99px; background: rgba(255, 255, 255, 0.16); color: inherit; font-weight: 700; }
+.detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* zones tactiles d'au moins 44 points, sans changer le dessin */
+.check { position: relative; }
+.check::after { content: ''; position: absolute; inset: -9px; border-radius: 50%; }
 .toast.on svg { animation: beat 0.9s ease-in-out 2; }
 .toast.on { transform: translate(-50%, 0); opacity: 1; }
 html.sheet-open .toast { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 14px); transform: translate(-50%, -20px); }
@@ -347,8 +353,7 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
 /* oui ou non */
 /* roue Oui / Non */
 .wheel-wrap { position: relative; width: min(78vw, 300px); aspect-ratio: 1; margin: 14px auto 6px; }
-.wheel { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 6px var(--surface), 0 18px 40px -18px rgba(0, 0, 0, 0.45);
-  transition-property: transform; transition-timing-function: cubic-bezier(0.12, 0.7, 0.08, 1); cursor: pointer; will-change: transform; }
+.wheel { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 6px var(--surface), 0 18px 40px -18px rgba(0, 0, 0, 0.45); cursor: pointer; will-change: transform; }
 .wheel svg { width: 100%; height: 100%; display: block; }
 .wheel text { font: 800 15px var(--font); letter-spacing: 0.02em; }
 .wheel .w-yes path { fill: var(--w-yes); } .wheel .w-yes text { fill: var(--w-yes-ink); }

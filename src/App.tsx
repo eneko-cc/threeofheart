@@ -11,7 +11,7 @@ import { YesNo } from './components/YesNo'
 import { burst, ScrollView, Sheet, Splash } from './components/ui'
 
 type Tab = 'home' | 'list' | 'map' | 'us'
-type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'detail'; id: string } | { kind: 'yesno'; q?: string } | null
+type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'edit'; id: string } | { kind: 'detail'; id: string } | { kind: 'yesno'; q?: string } | null
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'home', label: 'Accueil', icon: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>' },
@@ -41,16 +41,30 @@ export default function App() {
   }
   const navCol = { home: 0, list: 1, map: 3, us: 4 }[tab]
 
-  const toast = useCallback((m: string) => {
+  const undoRef = useRef<(() => void) | null>(null)
+  const [canUndo, setCanUndo] = useState(false)
+  /** Petit message en bas ; avec `undo`, il propose « Annuler » pendant 5 secondes. */
+  const toast = useCallback((m: string, undo?: () => void) => {
     setMsg(m)
+    undoRef.current = undo ?? null
+    setCanUndo(!!undo)
     clearTimeout(timer.current)
-    timer.current = window.setTimeout(() => setMsg(''), 1900)
+    timer.current = window.setTimeout(() => { setMsg(''); undoRef.current = null; setCanUndo(false) }, undo ? 5000 : 1900)
   }, [])
+  const undo = () => {
+    undoRef.current?.()
+    undoRef.current = null
+    setCanUndo(false)
+    clearTimeout(timer.current)
+    setMsg('Annulé')
+    timer.current = window.setTimeout(() => setMsg(''), 1200)
+  }
   const close = useCallback(() => setSheet(null), [])
   const open = (id: string) => setSheet({ kind: 'detail', id })
   const check = (id: string, el: HTMLElement) => {
     burst(el)
     store.patch(id, { done: true, doneAt: Date.now() })
+    toast("C'est fait !", () => { store.patch(id, { done: false, doneAt: undefined }); setSheet(null) })
     setTimeout(() => setSheet({ kind: 'detail', id }), 380)
   }
   const random = () => {
@@ -92,13 +106,18 @@ export default function App() {
           <AddSheet store={store} initialCat={sheet.cat}
             onDone={(it) => { close(); toast(it.lat != null ? 'Ajouté et épinglé sur la carte' : 'Ajouté à notre liste') }} />
         )}
+        {sheet?.kind === 'edit' && (
+          <AddSheet key={'edit-' + sheet.id} store={store} edit={store.state.items.find((i) => i.id === sheet.id)}
+            onDone={(it) => { setSheet({ kind: 'detail', id: it.id }); toast('Modifié') }} />
+        )}
         {sheet?.kind === 'detail' && <Detail key={sheet.id} store={store} id={sheet.id} onClose={close} toast={toast}
-          onYesNo={(q) => setSheet({ kind: 'yesno', q })} />}
+          onYesNo={(q) => setSheet({ kind: 'yesno', q })} onEdit={() => setSheet({ kind: 'edit', id: sheet.id })} />}
         {sheet?.kind === 'yesno' && <YesNo question={sheet.q} />}
       </Sheet>
-      <div className={'toast' + (msg ? ' on' : '')} role="status">
+      <div className={'toast' + (msg ? ' on' : '') + (canUndo ? ' undo' : '')} role="status">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 21C5 16 2 12.5 2 8.5A5 5 0 0 1 12 6a5 5 0 0 1 10 2.5c0 4-3 7.5-10 12.5z" /></svg>
         {msg}
+        {canUndo && <button className="toast-undo" onClick={undo}>Annuler</button>}
       </div>
       {splash && <Splash onEnd={endSplash} />}
       <div className="rotate" aria-hidden="true">

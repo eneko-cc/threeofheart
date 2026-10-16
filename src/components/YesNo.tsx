@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { burst } from './ui'
 
 // Roue de la décision : douze parts, Oui et Non en alternance. On tape, elle tourne, elle tranche.
@@ -17,6 +17,8 @@ export function YesNo({ question }: { question?: string }) {
   const [phase, setPhase] = useState<'idle' | 'spin' | 'yes' | 'no'>('idle')
   const wheel = useRef<HTMLDivElement>(null)
   const timer = useRef(0)
+  const raf = useRef(0)
+  useEffect(() => () => { cancelAnimationFrame(raf.current); clearTimeout(timer.current) }, [])
 
   const spin = () => {
     if (phase === 'spin') return
@@ -26,6 +28,17 @@ export function YesNo({ question }: { question?: string }) {
     const target = 360 - (k * SLICE + inside)
     const now = ((angle % 360) + 360) % 360
     const next = angle + (5 + Math.floor(Math.random() * 3)) * 360 + ((target - now + 360) % 360)
+    // animation pilotée image par image : elle tourne même si l'iPhone a « Réduire les animations » activé
+    const el = wheel.current
+    const t0 = performance.now()
+    cancelAnimationFrame(raf.current)
+    const step = (t: number) => {
+      const p = Math.min((t - t0) / TURN_MS, 1)
+      const e = 1 - Math.pow(1 - p, 4)
+      if (el) el.style.transform = `rotate(${angle + (next - angle) * e}deg)`
+      if (p < 1) raf.current = requestAnimationFrame(step)
+    }
+    raf.current = requestAnimationFrame(step)
     setAngle(next)
     setPhase('spin')
     navigator.vibrate?.(8)
@@ -46,7 +59,7 @@ export function YesNo({ question }: { question?: string }) {
       {question && <p className="yn-q">{question}</p>}
       <div className="wheel-wrap">
         <span className="wheel-arrow" aria-hidden="true" />
-        <div ref={wheel} className="wheel" style={{ transform: `rotate(${angle}deg)`, transitionDuration: `${TURN_MS}ms` }}
+        <div ref={wheel} className="wheel" style={phase === 'spin' ? undefined : { transform: `rotate(${angle}deg)` }}
           onClick={spin} role="button" aria-label="Faire tourner la roue">
           <svg viewBox="-100 -100 200 200" aria-hidden="true">
             {Array.from({ length: N }, (_, k) => (

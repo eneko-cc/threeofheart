@@ -1,11 +1,40 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { cat, Heart } from '../cats'
 import { avg, type Store } from '../store'
+import type { AppState } from '../types'
 import { CountUp } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
 
-export function Us({ store, toast }: { store: Store; toast: (m: string) => void }) {
-  const { state, setNames, setMe, clearExamples } = store
+export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: () => void) => void }) {
+  const { state, setNames, setMe, clearExamples, replaceAll } = store
+  const file = useRef<HTMLInputElement>(null)
+
+  /** Sauvegarde de toutes nos idées dans un fichier, à garder dans Fichiers ou à s'envoyer. */
+  const exportData = async () => {
+    const day = new Date().toISOString().slice(0, 10)
+    const f = new File([JSON.stringify(state, null, 1)], `threeofheart-${day}.json`, { type: 'application/json' })
+    try {
+      if (navigator.canShare?.({ files: [f] })) { await navigator.share({ files: [f], title: 'Sauvegarde Threeofheart' }); return }
+    } catch (e) { if ((e as Error).name === 'AbortError') return }
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(f)
+    a.download = f.name
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000)
+  }
+  const importData = async (f?: File) => {
+    if (!f) return
+    try {
+      const next = JSON.parse(await f.text()) as AppState
+      if (!Array.isArray(next.items)) throw new Error('format')
+      const before = state
+      replaceAll(next)
+      toast(`${next.items.length} idées restaurées`, () => replaceAll(before))
+    } catch {
+      toast("Ce fichier n'est pas une sauvegarde Threeofheart")
+    }
+    if (file.current) file.current.value = ''
+  }
   const [sure, setSure] = useState(false)
   const [design, setD] = useState<Design>(getDesign)
   const pick = (d: Design) => { setD(d); setDesign(d) }
@@ -64,6 +93,12 @@ export function Us({ store, toast }: { store: Store; toast: (m: string) => void 
           {sure ? 'Appuie encore pour confirmer' : 'Effacer les exemples'}
         </button>
       )}
+      <div className="section-head"><h2>Sauvegarde</h2></div>
+      <div className="names">
+        <button className="secondary" onClick={exportData}>Exporter</button>
+        <button className="secondary" onClick={() => file.current?.click()}>Importer</button>
+        <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => importData(e.target.files?.[0])} />
+      </div>
       <p className="note">
         Pour l'instant, vos idées restent sur ce téléphone. La synchro entre vos deux téléphones arrive bientôt.
       </p>

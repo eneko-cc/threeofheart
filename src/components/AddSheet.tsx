@@ -6,21 +6,22 @@ import type { CatId, Item } from '../types'
 
 type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
 
-export function AddSheet({ store, initialCat, onDone }: { store: Store; initialCat?: CatId; onDone: (item: Item) => void }) {
-  const [c, setC] = useState<CatId>(initialCat ?? 'resto')
-  const [title, setTitle] = useState('')
-  const [where, setWhere] = useState('')
-  const [note, setNote] = useState('')
+/** Ajout d'une idée, ou modification quand `edit` est fourni. */
+export function AddSheet({ store, initialCat, edit, onDone }: { store: Store; initialCat?: CatId; edit?: Item; onDone: (item: Item) => void }) {
+  const [c, setC] = useState<CatId>(edit?.cat ?? initialCat ?? 'resto')
+  const [title, setTitle] = useState(edit?.title ?? '')
+  const [where, setWhere] = useState(edit?.where ?? '')
+  const [note, setNote] = useState(edit?.note ?? '')
   const [place, setPlace] = useState<Place | null>(null)
-  const [poster, setPoster] = useState<string | undefined>()
+  const [poster, setPoster] = useState<string | undefined>(edit?.poster)
   const [sugg, setSugg] = useState<Suggestion[]>([])
-  const [picked, setPicked] = useState(false)
+  const [picked, setPicked] = useState(!!edit)
   const [offline, setOffline] = useState(false)
   const [saved, setSaved] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const meta = cat(c)
 
-  useEffect(() => { setTimeout(() => input.current?.focus(), 400) }, [])
+  useEffect(() => { if (!edit) setTimeout(() => input.current?.focus(), 400) }, [edit])
 
   useEffect(() => {
     setSugg([])
@@ -57,15 +58,20 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
   }
 
   const save = () => {
+    // en modification, on garde l'épingle d'origine tant qu'aucun nouveau lieu n'est choisi
+    const geo = place ? { lat: place.lat, lng: place.lng, address: place.address }
+      : edit?.lat != null ? { lat: edit.lat, lng: edit.lng, address: edit.address } : {}
     const item: Item = {
-      id: newId(),
+      ...edit,
+      id: edit?.id ?? newId(),
       title: title.trim(),
       cat: c,
       where: where.trim() || undefined,
       note: note.trim() || undefined,
-      by: store.state.me,
-      createdAt: Date.now(),
-      ...(meta.place && place ? { lat: place.lat, lng: place.lng, address: place.address } : {}),
+      by: edit?.by ?? store.state.me,
+      createdAt: edit?.createdAt ?? Date.now(),
+      lat: undefined, lng: undefined, address: undefined, poster: undefined,
+      ...(meta.place ? geo : {}),
       ...(poster && !meta.place ? { poster } : {}),
     }
     setSaved(true)
@@ -77,11 +83,11 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
 
   return (
     <div className="add">
-      <h2 className="sheet-title">Nouvelle idée</h2>
+      <h2 className="sheet-title">{edit ? 'Modifier' : 'Nouvelle idée'}</h2>
       <div className="cat-grid">
         {CATS.map((k) => (
           <button key={k.id} className="cat" aria-pressed={k.id === c} style={{ background: k.bg, color: k.ink }}
-            onClick={() => { setC(k.id); setPicked(false); setPlace(null); setPoster(undefined) }}>
+            onClick={() => { if (k.id === c) return; setC(k.id); setPicked(false); setPlace(null); if (!edit || cat(k.id).place) setPoster(undefined) }}>
             <CatIcon id={k.id} size={20} />{k.label}
           </button>
         ))}
@@ -90,7 +96,7 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
         <label htmlFor="f-title">{meta.place ? 'Nom ou adresse' : c === 'todo' ? 'Quoi ?' : 'Titre'}</label>
         <input ref={input} id="f-title" autoComplete="off" value={title}
           placeholder={meta.place ? 'Ex. ramen rue Sainte-Anne' : c === 'todo' ? 'Ex. réserver le resto pour son anniv' : 'Ex. Le Voyage de Chihiro'}
-          onChange={(e) => { setTitle(e.target.value); setPicked(false); setPlace(null); setPoster(undefined) }} />
+          onChange={(e) => { setTitle(e.target.value); setPicked(false); setPlace(null); setPoster(edit?.poster) }} />
         {sugg.length > 0 && (
           <ul className="sugg">
             {sugg.map((s, k) => (
@@ -107,7 +113,8 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
           </ul>
         )}
         {place && <p className="hint ok">Épinglé sur la carte : {place.address || place.sub}</p>}
-        {meta.place && !place && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste pour l'épingler sur la carte.</p>}
+        {!place && edit?.lat != null && meta.place && <p className="hint ok">Toujours épinglé sur la carte. Tape un autre lieu pour le déplacer.</p>}
+        {meta.place && !place && edit?.lat == null && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste pour l'épingler sur la carte.</p>}
         {offline && <p className="hint">Recherche indisponible, tu peux quand même l'ajouter.</p>}
       </div>
       <div className="field">
@@ -121,7 +128,7 @@ export function AddSheet({ store, initialCat, onDone }: { store: Store; initialC
       <button className={'primary' + (saved ? ' saved' : '')} disabled={!title.trim() || saved} onClick={save}>
         {saved ? (
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round" aria-label="Ajouté"><path className="draw" d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-        ) : 'Ajouter à notre liste'}
+        ) : edit ? 'Enregistrer' : 'Ajouter à notre liste'}
       </button>
     </div>
   )
