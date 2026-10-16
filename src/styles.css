@@ -63,6 +63,10 @@ html, body { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: n
 html { background: var(--bg); }
 /* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--band); z-index: 15; pointer-events: none; }
+/* app installée : la barre de l'heure d'iOS est blanche, on fond le haut de l'app dans ce blanc */
+@media (display-mode: standalone) {
+  body::before { height: 34px; background: linear-gradient(#FFFFFF, color-mix(in srgb, #FFFFFF 55%, transparent) 45%, transparent); }
+}
 .rotate { display: none; }
 @media (orientation: landscape) and (max-height: 520px) {
   .rotate { display: flex; position: fixed; inset: 0; z-index: 200; background: #16302A; color: #FFF7F9; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
