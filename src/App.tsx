@@ -101,6 +101,10 @@ export default function App() {
         {msg}
       </div>
       {splash && <Splash onEnd={endSplash} />}
+      <div className="rotate" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5" /><path d="M11 18.5h2" /></svg>
+        <p>Remets ton téléphone droit, Three of Heart se vit en portrait.</p>
+      </div>
     </div>
   )
 }

@@ -27,4 +27,6 @@ export interface AppState {
   names: { a: string; b: string }
   /** À qui appartient ce téléphone */
   me: Who
+  /** Version des données, pour les migrations */
+  v?: number
 }

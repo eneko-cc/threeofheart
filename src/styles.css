@@ -39,6 +39,16 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
+html { background: var(--bg); }
+/* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: #16302A; z-index: 15; pointer-events: none; }
+.rotate { display: none; }
+@media (orientation: landscape) and (max-height: 520px) {
+  .rotate { display: flex; position: fixed; inset: 0; z-index: 200; background: #16302A; color: #FFF7F9; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
+  .rotate svg { animation: tilt 1.6s ease-in-out infinite; }
+  .rotate p { margin: 0; font-weight: 600; font-size: 18px; max-width: 28ch; }
+}
+@keyframes tilt { 0%, 30% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0deg); } }
 body {
   background: var(--bg);
   color: var(--fg);
