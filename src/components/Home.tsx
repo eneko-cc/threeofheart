@@ -3,11 +3,6 @@ import type { Store } from '../store'
 import type { CatId } from '../types'
 import { CountUp, ItemCard } from './ui'
 
-const today = () => {
-  const s = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
 export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
   store: Store
   onOpen: (id: string) => void
@@ -23,14 +18,7 @@ export function Home({ store, onOpen, onCheck, onCat, onRandom, onYesNo }: {
 
   return (
     <div className="page">
-      <div className="topline">
-        <div className="duo-mini" aria-hidden="true">
-          <span className="av a">{state.names.a[0]}</span>
-          <span className="av b">{state.names.b[0]}</span>
-        </div>
-        <div className="date">{today()}</div>
-      </div>
-      <h1 className="big">Salut {state.names.a}<br />& {state.names.b}</h1>
+      <h1 className="big brand-title">Threeofheart</h1>
 
       <section className="hero">
         <div className="hero-txt">

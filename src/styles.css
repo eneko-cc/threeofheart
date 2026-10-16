@@ -39,6 +39,8 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
+/* le document ne défile jamais : seules les vues défilent (évite le décalage en haut sur iPhone) */
+html, body { position: fixed; inset: 0; overflow: hidden; overscroll-behavior: none; }
 html { background: var(--bg); }
 /* bande derrière l'heure et la batterie (barre d'état translucide d'iOS) */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: #16302A; z-index: 15; pointer-events: none; }
@@ -89,6 +91,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .big { transform: translateY(calc(var(--sy, 0) * 0.3px)); opacity: calc(1 - var(--sy, 0) / 150); transform-origin: 0 100%;
   font-size: 40px; line-height: 1.02; font-weight: 800; letter-spacing: -0.03em; margin: 2px 0 4px; text-wrap: balance; }
 .big.small { font-size: 34px; }
+.brand-title { font-size: 44px; margin-top: 10px; }
 
 /* carte « ce soir » */
 .hero {

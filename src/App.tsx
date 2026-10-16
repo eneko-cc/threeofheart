@@ -62,7 +62,7 @@ export default function App() {
   return (
     <div className="app">
       <main>
-        <ScrollView hidden={tab !== 'home'} title={`${store.state.names.a} & ${store.state.names.b}`} dx={dx}>
+        <ScrollView hidden={tab !== 'home'} title="Threeofheart" dx={dx}>
           <Home store={store} onOpen={open} onCheck={check} onRandom={random} onYesNo={() => setSheet({ kind: 'yesno' })}
             onCat={(c) => { setFilter(c); go('list') }} />
         </ScrollView>
