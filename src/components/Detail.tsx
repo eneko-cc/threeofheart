@@ -3,6 +3,7 @@ import { CatIcon, cat } from '../cats'
 import { avg, type Store } from '../store'
 import { directionsUrl } from '../search'
 import { burst, Hearts } from './ui'
+import { PlacePhotos } from './PlacePhotos'
 
 export function Detail({ store, id, onClose, toast, onYesNo }: {
   store: Store; id: string; onClose: () => void; toast: (m: string) => void; onYesNo: (q: string) => void
@@ -23,6 +24,7 @@ export function Detail({ store, id, onClose, toast, onYesNo }: {
         {item.where && <span className="pill">{item.where}</span>}
         <span className="pill">Idée de {state.names[item.by]}</span>
       </div>
+      <PlacePhotos item={item} />
       {item.note && <p className="desc">{item.note}</p>}
       {item.address && <p className="addr">{item.address}</p>}
       {item.lat != null && item.lng != null && (

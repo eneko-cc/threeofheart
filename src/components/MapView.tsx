@@ -6,6 +6,7 @@ import type { Store } from '../store'
 import type { CatId } from '../types'
 import { Chips } from './ListView'
 import { ItemCard } from './ui'
+import { PlacePhotos } from './PlacePhotos'
 
 // Fond de carte OpenFreeMap (gratuit, sans clé), recoloré aux couleurs de l'app.
 const STYLE = 'https://tiles.openfreemap.org/styles/positron'
@@ -125,7 +126,12 @@ export function MapView({ store, active, onOpen }: { store: Store; active: boole
       </div>
       {failed && <p className="map-msg">La carte ne charge pas. Vérifie ta connexion.</p>}
       <div className={'peek' + (selected ? ' on' : '')}>
-        {selected && <ItemCard item={selected} state={store.state} onOpen={() => onOpen(selected.id)} />}
+        {selected && (
+          <div className="peek-in">
+            <PlacePhotos key={selected.id} item={selected} compact />
+            <ItemCard item={selected} state={store.state} onOpen={() => onOpen(selected.id)} />
+          </div>
+        )}
       </div>
     </div>
   )
