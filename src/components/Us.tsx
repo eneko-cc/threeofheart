@@ -6,7 +6,7 @@ import { CountUp } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
 
 export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: () => void) => void }) {
-  const { state, setNames, clearExamples, replaceAll } = store
+  const { state, clearExamples, replaceAll } = store
   const file = useRef<HTMLInputElement>(null)
 
   /** Sauvegarde de toutes nos idées dans un fichier, à garder dans Fichiers ou à s'envoyer. */
@@ -76,12 +76,6 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
           <span className="swatches"><i style={{ background: '#DE3566' }} /><i style={{ background: '#FCCC60' }} /><i style={{ background: '#72BA2C' }} /><i style={{ background: '#FF9B3D' }} /></span>
           Palette de Ju
         </button>
-      </div>
-
-      <div className="section-head"><h2>Prénoms</h2></div>
-      <div className="names">
-        <input id="name-a" aria-label="Premier prénom" maxLength={14} value={state.names.a} onChange={(e) => setNames({ ...state.names, a: e.target.value || ' ' })} />
-        <input id="name-b" aria-label="Second prénom" maxLength={14} value={state.names.b} onChange={(e) => setNames({ ...state.names, b: e.target.value || ' ' })} />
       </div>
 
       {hasExamples && (

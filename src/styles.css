@@ -444,7 +444,7 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --shadow: 0 14px 30px -18px rgba(120, 20, 55, 0.45);
   --font-display: var(--font); --display-style: normal;
   --font-label: var(--font); --label-transform: none; --label-spacing: -0.02em; --label-weight: 700;
-  --band: #DE3566;
+  --band: #FFF6F1;
   --nav: #DE3566; --nav-ink: rgba(255, 255, 255, 0.78); --blob: #FFF6F1; --blob-ink: #DE3566; --fab: #FCCC60; --fab-ink: #3B0F22;
   --hero: #3B0F22; --hero-ink: #FFF6F1;
   --btn: #FCCC60; --btn-ink: #3B0F22; --btn2: transparent; --btn2-ink: #FFF6F1; --btn2-line: rgba(255, 246, 241, 0.6);

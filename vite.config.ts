@@ -9,6 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: false,
       includeAssets: ['apple-touch-icon.png', 'favicon.png'],
       manifest: {
         name: 'Three of Heart',
@@ -17,7 +18,7 @@ export default defineConfig({
         lang: 'fr',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#FFF7F9',
+        background_color: '#FFF6F1',
         theme_color: '#16302A',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
