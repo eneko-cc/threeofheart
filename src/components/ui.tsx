@@ -151,7 +151,7 @@ export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
           C'est fait
         </span>
       )}
-      <div ref={card} className="card" style={{ background: c.bg, color: c.ink }}>
+      <div ref={card} className="card" style={{ background: c.bg, color: c.ink, ['--cb' as string]: c.bg, ['--ci' as string]: c.ink }}>
         <button className="card-main" onClick={onOpen}>
           <span className="bubble">
             {item.poster ? <img src={item.poster} alt="" loading="lazy" /> : <CatIcon id={item.cat} />}
@@ -233,9 +233,9 @@ export function Splash({ onEnd }: { onEnd: () => void }) {
   return (
     <div className="splash" aria-hidden="true">
       <svg viewBox="0 0 60 60" width="120" height="120">
-        <path className="s1" d="M15 40c-7-5-11-9-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 5-4 9-11 14z" fill="#B9D6EF" />
-        <path className="s2" d="M45 40c-7-5-11-9-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 5-4 9-11 14z" fill="#F4B6C8" />
-        <path className="s3" d="M30 48c-9-6.5-14-11-14-17.5a7.5 7.5 0 0 1 14-4 7.5 7.5 0 0 1 14 4C44 37 39 41.5 30 48z" fill="#1F4D3A" />
+        <path className="s1" d="M15 40c-7-5-11-9-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 5-4 9-11 14z" style={{ fill: 'var(--s1)' }} />
+        <path className="s2" d="M45 40c-7-5-11-9-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 5-4 9-11 14z" style={{ fill: 'var(--s2)' }} />
+        <path className="s3" d="M30 48c-9-6.5-14-11-14-17.5a7.5 7.5 0 0 1 14-4 7.5 7.5 0 0 1 14 4C44 37 39 41.5 30 48z" style={{ fill: 'var(--s3)' }} />
       </svg>
       <span>Three of Heart</span>
     </div>
@@ -249,7 +249,9 @@ export function burst(el: Element, count = 16) {
   w.className = 'burst'
   w.style.left = `${r.left + r.width / 2 - 11}px`
   w.style.top = `${r.top + r.height / 2 - 11}px`
-  const cols = ['#E58AA5', '#6FA3CF', '#F4B6C8', '#6DB58A', '#1F4D3A']
+  const cols = document.documentElement.dataset.design === 'v2'
+    ? ['#DE3566', '#FCCC60', '#FF9BAE', '#72BA2C', '#FA610E']
+    : ['#E58AA5', '#6FA3CF', '#F4B6C8', '#6DB58A', '#1F4D3A']
   const spread = count > 8 ? 1 : 0.45
   for (let k = 0; k < count; k++) {
     const a = Math.random() * Math.PI * 2

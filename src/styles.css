@@ -33,6 +33,8 @@
   --heart: #E58AA5; --done: #1F4D3A; --done-ink: #FFFFFF;
   --toast: #16302A; --toast-ink: #FFFFFF; --toast-heart: #F4B6C8;
   --coin: var(--c-lilac); --coin-ink: #16302A;
+  --pin-resto: #E58AA5; --pin-activite: #6DB58A; --pin-event: #E2B23C; --pin-film: #6FA3CF; --pin-serie: #9C8CD6; --pin-todo: #1F4D3A; --pin-done: #1F4D3A;
+  --s1: #B9D6EF; --s2: #F4B6C8; --s3: #1F4D3A;
   --bg-resto: var(--c-pink); --bg-activite: var(--c-mint); --bg-event: var(--c-butter); --bg-film: var(--c-blue); --bg-serie: var(--c-lilac); --bg-todo: var(--c-sand);
   --ink-resto: var(--card-ink); --ink-activite: var(--card-ink); --ink-event: var(--card-ink); --ink-film: var(--card-ink); --ink-serie: var(--card-ink); --ink-todo: var(--card-ink);
   color-scheme: light;
@@ -217,7 +219,7 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .status button[aria-pressed='true'] { background: var(--fir); color: var(--fir-ink); }
 .lg { width: 14px; height: 14px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); flex: none; }
 .lg.heart { background: var(--heart); }
-.lg.check { background: #1F4D3A; box-shadow: 0 0 0 1.5px #fff; }
+.lg.check { background: var(--pin-done); box-shadow: 0 0 0 1.5px #fff; }
 .pin.done { width: 32px; height: 39px; }
 .map-msg { position: absolute; left: 18px; right: 18px; top: 45%; text-align: center; background: var(--surface); border-radius: 18px; padding: 14px; font-weight: 600; box-shadow: var(--shadow); }
 .pin { width: 38px; height: 46px; cursor: pointer; }
@@ -402,40 +404,63 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
 }
 
 /* ------------------------------------------------------------------ */
-/* Version 2 : Pink Lace & Forest Green (un seul thème, clair)         */
+/* Version Ju : la palette de Ju (fuchsia, soleil, mandarine, olive,   */
+/* sauge, pêche) sur fond crème. Texte lisible partout, seul le titre  */
+/* « Threeofheart » garde son italique.                                 */
 /* ------------------------------------------------------------------ */
 :root[data-design='v2'] {
   color-scheme: light;
-  --bg: #FBC9E2; --surface: #FFE5F1; --surface-2: #F7B5D4; --fg: #0F4A2C; --muted: #3F6E55; --line: #F3A7CB;
-  --fir: #0F4A2C; --fir-ink: #FBC9E2; --accent: #0F4A2C; --card-ink: #0F4A2C;
-  --shadow: 0 14px 30px -16px rgba(15, 74, 44, 0.45);
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif; --display-style: italic;
-  --font-label: 'Josefin Sans', var(--font); --label-transform: uppercase; --label-spacing: 0.14em; --label-weight: 300;
-  --band: #0F4A2C;
-  --nav: #0F4A2C; --nav-ink: rgba(251, 201, 226, 0.6); --blob: #FBC9E2; --blob-ink: #0F4A2C; --fab: #FFE5F1; --fab-ink: #0F4A2C;
-  --hero: #0F4A2C; --hero-ink: #FBC9E2;
-  --btn: #FBC9E2; --btn-ink: #0F4A2C; --btn2: transparent; --btn2-ink: #FBC9E2; --btn2-line: rgba(251, 201, 226, 0.7);
-  --h1c: #FBC9E2; --h2c: #F48DBE; --h3c: #FFE5F1;
-  --heart: #0F4A2C; --done: #0F4A2C; --done-ink: #FBC9E2;
-  --toast: #0F4A2C; --toast-ink: #FBC9E2; --toast-heart: #FBC9E2;
-  --coin: #0F4A2C; --coin-ink: #FBC9E2;
-  --bg-resto: #0F4A2C; --ink-resto: #FBC9E2;
-  --bg-activite: #F48DBE; --ink-activite: #0F4A2C;
-  --bg-event: #FFE5F1; --ink-event: #0F4A2C;
-  --bg-film: #2E6B49; --ink-film: #FFE5F1;
-  --bg-serie: #FFD2E6; --ink-serie: #0F4A2C;
-  --bg-todo: #FFF3F9; --ink-todo: #0F4A2C;
+  --bg: #FFF6F1; --surface: #FFFFFF; --surface-2: #FDE5DA; --fg: #3B0F22; --muted: #8B5664; --line: #F6D3C6;
+  --fir: #DE3566; --fir-ink: #FFFFFF; --accent: #DE3566; --card-ink: #3B0F22;
+  --shadow: 0 14px 30px -18px rgba(120, 20, 55, 0.45);
+  --font-display: var(--font); --display-style: normal;
+  --font-label: var(--font); --label-transform: none; --label-spacing: -0.02em; --label-weight: 700;
+  --band: #DE3566;
+  --nav: #DE3566; --nav-ink: rgba(255, 255, 255, 0.78); --blob: #FFF6F1; --blob-ink: #DE3566; --fab: #FCCC60; --fab-ink: #3B0F22;
+  --hero: #3B0F22; --hero-ink: #FFF6F1;
+  --btn: #FCCC60; --btn-ink: #3B0F22; --btn2: transparent; --btn2-ink: #FFF6F1; --btn2-line: rgba(255, 246, 241, 0.6);
+  --h1c: #FF9BAE; --h2c: #FCCC60; --h3c: #FA610E;
+  --heart: #DE3566; --done: #72BA2C; --done-ink: #1E3308;
+  --toast: #3B0F22; --toast-ink: #FFF6F1; --toast-heart: #FF9BAE;
+  --coin: #DE3566; --coin-ink: #FFFFFF;
+  --c-pink: #FEB3A9; --c-blue: #FCCC60; --c-mint: #BAC664;
+  --s1: #FCCC60; --s2: #FF9BAE; --s3: #DE3566;
+  --on: rgba(255, 255, 255, 0.6);
+  /* six familles de couleurs bien distinctes, chacune avec son encre contrastée */
+  --bg-resto: #DE3566;    --ink-resto: #FFFFFF;
+  --bg-activite: #72BA2C; --ink-activite: #1E3308;
+  --bg-event: #FCCC60;    --ink-event: #4A2A00;
+  --bg-film: #FF9B3D;     --ink-film: #4A1E00;
+  --bg-serie: #FEB3A9;    --ink-serie: #5A0F2A;
+  --bg-todo: #BAC664;     --ink-todo: #2F3510;
+  --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-done: #3B0F22;
 }
-:root[data-design='v2'] .big { font-size: 48px; letter-spacing: -0.01em; font-weight: 900; }
-:root[data-design='v2'] .hero h2, :root[data-design='v2'] .sheet-title { font-weight: 900; letter-spacing: -0.01em; }
-:root[data-design='v2'] .tile-name { font-weight: 900; }
+:root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: 48px; letter-spacing: -0.01em; color: #DE3566; }
+:root[data-design='v2'] .big { font-weight: 800; }
+:root[data-design='v2'] .hero h2 { font-size: 28px; font-weight: 800; }
 :root[data-design='v2'] .hero p { opacity: 0.85; }
-:root[data-design='v2'] .tag, :root[data-design='v2'] .card-score, :root[data-design='v2'] .bubble, :root[data-design='v2'] .tile-ic, :root[data-design='v2'] .check { background: rgba(255, 255, 255, 0.55); color: #0F4A2C; }
-:root[data-design='v2'] .search, :root[data-design='v2'] .chip { border-color: transparent; }
-:root[data-design='v2'] .ghost.danger { color: #B0306E; }
-:root[data-design='v2'] .stat { background: var(--surface) !important; color: var(--fg); }
-:root[data-design='v2'] .stat:nth-child(2) { background: #0F4A2C !important; color: #FBC9E2; }
-:root[data-design='v2'] .pill[style] { color: inherit; }
+:root[data-design='v2'] .tile-name { font-weight: 800; }
+:root[data-design='v2'] .card-title { font-weight: 700; }
+:root[data-design='v2'] .card-sub { opacity: 0.8; }
+:root[data-design='v2'] :is(.tile, .card, .best) :is(.tag, .tile-ic, .bubble, .card-score, .check) { background: var(--on); color: inherit; border-color: transparent; }
+:root[data-design='v2'] :is(.tile, .card, .best)[style*='--bg-resto'] { --on: rgba(255, 255, 255, 0.22); }
+:root[data-design='v2'] :is(.tile, .card)[style*='--bg-resto'] .card-score svg { color: #FFFFFF; }
+:root[data-design='v2'] .check:active, :root[data-design='v2'] .swipe.gone .check { background: var(--done); color: var(--done-ink); }
+/* dans la liste : cartes blanches, la couleur de la catégorie reste sur la pastille (plus calme à parcourir) */
+:root[data-design='v2'] .list .card { background: var(--surface) !important; color: var(--fg) !important; box-shadow: 0 6px 16px -12px rgba(120, 20, 55, 0.35); }
+:root[data-design='v2'] .list .card .bubble { background: var(--cb); color: var(--ci); }
+:root[data-design='v2'] .list .card :is(.check, .card-score) { background: var(--surface-2); color: var(--fg); }
+:root[data-design='v2'] .list .card .card-score svg { color: var(--heart); }
+:root[data-design='v2'] .list .card .card-sub { color: var(--muted); opacity: 1; }
+:root[data-design='v2'] .search, :root[data-design='v2'] .chip { border-color: var(--line); }
+:root[data-design='v2'] .ghost.danger { color: #C4224F; }
+:root[data-design='v2'] .stat { color: var(--card-ink); }
+:root[data-design='v2'] .stat:nth-child(2) { color: #4A2A00; }
+:root[data-design='v2'] .av { color: #3B0F22; }
+:root[data-design='v2'] .av.a { background: #FCCC60; }
+:root[data-design='v2'] .av.b { background: #FF9BAE; }
+:root[data-design='v2'] :focus-visible { outline-color: #DE3566; }
+:root[data-design='v2'] .scrim { background: rgba(59, 15, 34, 0.42); }
 
 /* choix du style dans « Nous » */
 .design-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -443,13 +468,3 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
 .design-pick button[aria-pressed='true'] { border-color: var(--fg); transform: translateY(-2px); }
 .swatches { display: flex; gap: 4px; }
 .swatches i { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08); }
-/* éléments posés sur les fonds vert forêt (restos, films) */
-:root[data-design='v2'] :is(.tile, .card)[style*='--bg-resto'] :is(.tag, .tile-ic, .bubble, .check, .card-score),
-:root[data-design='v2'] :is(.tile, .card)[style*='--bg-film'] :is(.tag, .tile-ic, .bubble, .check, .card-score) {
-  background: rgba(251, 201, 226, 0.18); color: #FBC9E2; border-color: rgba(251, 201, 226, 0.35);
-}
-:root[data-design='v2'] :is(.tile, .card)[style*='--bg-resto'] .card-score svg,
-:root[data-design='v2'] :is(.tile, .card)[style*='--bg-film'] .card-score svg { color: #FBC9E2; }
-:root[data-design='v2'] .best[style*='--bg-resto'] .tag, :root[data-design='v2'] .best[style*='--bg-film'] .tag { background: rgba(251, 201, 226, 0.18); color: #FBC9E2; }
-:root[data-design='v2'] .av.a { background: #0F4A2C; color: #FBC9E2; }
-:root[data-design='v2'] .av.b { background: #FFE5F1; color: #0F4A2C; }

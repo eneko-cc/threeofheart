@@ -41,8 +41,8 @@ export function Us({ store, toast }: { store: Store; toast: (m: string) => void 
           Version 1
         </button>
         <button aria-pressed={design === 'v2'} onClick={() => pick('v2')}>
-          <span className="swatches"><i style={{ background: '#FBC9E2' }} /><i style={{ background: '#0F4A2C' }} /></span>
-          Version 2
+          <span className="swatches"><i style={{ background: '#DE3566' }} /><i style={{ background: '#FCCC60' }} /><i style={{ background: '#72BA2C' }} /><i style={{ background: '#FF9B3D' }} /></span>
+          Palette de Ju
         </button>
       </div>
 

@@ -13,7 +13,7 @@ const STYLE = 'https://tiles.openfreemap.org/styles/positron'
 
 function palette() {
   if (document.documentElement.dataset.design === 'v2')
-    return { land: '#FFE5F1', water: '#F4A9CC', park: '#B9D3BF', road: '#FFFFFF', major: '#FFFFFF', building: '#FAD3E5', text: '#3F6E55' }
+    return { land: '#FFF6F1', water: '#FFC9D3', park: '#DCE3B0', road: '#FFFFFF', major: '#FFFFFF', building: '#FBE6DC', text: '#8B5664' }
   const dark = matchMedia('(prefers-color-scheme: dark)').matches
   return dark
     ? { land: '#14291F', water: '#2B4D66', park: '#1E4434', road: '#1C382C', major: '#24493A', building: '#183326', text: '#86A193' }
@@ -56,7 +56,7 @@ function pinEl(color: string, done: boolean, delay: number) {
   const glyph = done
     ? '<path d="M12.5 17.5l4.5 4.5 8.5-9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>'
     : `<g transform="translate(10.5 8.5) scale(.7)"><path d="${HEART_PATH}" fill="#fff"/></g>`
-  el.innerHTML = `<span class="pin-in" style="animation-delay:${delay}ms"><svg viewBox="0 0 38 46"><path d="M19 45C8 33 2 25 2 17a17 17 0 0 1 34 0c0 8-6 16-17 28z" fill="${done ? '#1F4D3A' : color}" stroke="#fff" stroke-width="2.5"/>${glyph}</svg></span>`
+  el.innerHTML = `<span class="pin-in" style="animation-delay:${delay}ms"><svg viewBox="0 0 38 46"><path d="M19 45C8 33 2 25 2 17a17 17 0 0 1 34 0c0 8-6 16-17 28z" style="fill:${done ? 'var(--pin-done)' : color}" stroke="#fff" stroke-width="2.5"/>${glyph}</svg></span>`
   return el
 }
 

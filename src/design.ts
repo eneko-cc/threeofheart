@@ -1,4 +1,4 @@
-// Deux styles d'interface : Version 1 (pastels) et Version 2 (Pink Lace & Forest Green).
+// Deux styles d'interface : Version 1 (pastels) et Version Ju (palette de Ju).
 export type Design = 'v1' | 'v2'
 const KEY = 'toh-design'
 
@@ -8,7 +8,7 @@ export function getDesign(): Design {
 
 export function applyDesign(d: Design = getDesign()) {
   document.documentElement.dataset.design = d
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', d === 'v2' ? '#0F4A2C' : '#16302A')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', d === 'v2' ? '#DE3566' : '#16302A')
 }
 
 export function setDesign(d: Design) {
