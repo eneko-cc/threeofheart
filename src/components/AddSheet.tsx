@@ -1,0 +1,123 @@
+import { useEffect, useRef, useState } from 'react'
+import { CATS, CatIcon, cat } from '../cats'
+import { newId, type Store } from '../store'
+import { searchPlaces, searchWorks, type Place, type Work } from '../search'
+import type { CatId, Item } from '../types'
+
+type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
+
+export function AddSheet({ store, initialCat, onDone }: { store: Store; initialCat?: CatId; onDone: (item: Item) => void }) {
+  const [c, setC] = useState<CatId>(initialCat ?? 'resto')
+  const [title, setTitle] = useState('')
+  const [where, setWhere] = useState('')
+  const [note, setNote] = useState('')
+  const [place, setPlace] = useState<Place | null>(null)
+  const [poster, setPoster] = useState<string | undefined>()
+  const [sugg, setSugg] = useState<Suggestion[]>([])
+  const [picked, setPicked] = useState(false)
+  const [offline, setOffline] = useState(false)
+  const input = useRef<HTMLInputElement>(null)
+  const meta = cat(c)
+
+  useEffect(() => { setTimeout(() => input.current?.focus(), 400) }, [])
+
+  useEffect(() => {
+    setSugg([])
+    if (picked || title.trim().length < 3 || c === 'todo') return
+    const ctrl = new AbortController()
+    const t = setTimeout(async () => {
+      try {
+        if (meta.place) {
+          const ps = await searchPlaces(title.trim(), ctrl.signal)
+          setSugg(ps.map((p) => ({ kind: 'place', p })))
+        } else {
+          const ws = await searchWorks(title.trim(), c as 'film' | 'serie', ctrl.signal)
+          setSugg(ws.map((w) => ({ kind: 'work', w })))
+        }
+        setOffline(false)
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError') setOffline(true)
+      }
+    }, 350)
+    return () => { clearTimeout(t); ctrl.abort() }
+  }, [title, c, picked, meta.place])
+
+  const pick = (s: Suggestion) => {
+    setPicked(true)
+    setSugg([])
+    if (s.kind === 'place') {
+      setTitle(s.p.label)
+      setWhere(s.p.where)
+      setPlace(s.p)
+    } else {
+      setTitle(s.w.title)
+      setPoster(s.w.poster)
+    }
+  }
+
+  const save = () => {
+    const item: Item = {
+      id: newId(),
+      title: title.trim(),
+      cat: c,
+      where: where.trim() || undefined,
+      note: note.trim() || undefined,
+      by: store.state.me,
+      createdAt: Date.now(),
+      ...(meta.place && place ? { lat: place.lat, lng: place.lng, address: place.address } : {}),
+      ...(poster && !meta.place ? { poster } : {}),
+    }
+    store.upsert(item)
+    onDone(item)
+  }
+
+  const whereLabel = meta.place ? 'Quartier' : c === 'todo' ? 'Quand ?' : 'Où le regarder ?'
+  const wherePh = meta.place ? 'Ex. 11e, Canal Saint-Martin' : c === 'todo' ? 'Ex. ce week-end' : 'Ex. Netflix, au cinéma'
+
+  return (
+    <div className="add">
+      <h2 className="sheet-title">Nouvelle idée</h2>
+      <div className="cat-grid">
+        {CATS.map((k) => (
+          <button key={k.id} className="cat" aria-pressed={k.id === c} style={{ background: k.bg }}
+            onClick={() => { setC(k.id); setPicked(false); setPlace(null); setPoster(undefined) }}>
+            <CatIcon id={k.id} size={20} />{k.label}
+          </button>
+        ))}
+      </div>
+      <div className="field">
+        <label htmlFor="f-title">{meta.place ? 'Nom ou adresse' : c === 'todo' ? 'Quoi ?' : 'Titre'}</label>
+        <input ref={input} id="f-title" autoComplete="off" value={title}
+          placeholder={meta.place ? 'Ex. ramen rue Sainte-Anne' : c === 'todo' ? 'Ex. réserver le resto pour son anniv' : 'Ex. Le Voyage de Chihiro'}
+          onChange={(e) => { setTitle(e.target.value); setPicked(false); setPlace(null); setPoster(undefined) }} />
+        {sugg.length > 0 && (
+          <ul className="sugg">
+            {sugg.map((s, k) => (
+              <li key={k}>
+                <button onClick={() => pick(s)}>
+                  {s.kind === 'work' && (s.w.poster ? <img src={s.w.poster} alt="" /> : <span className="noimg" />)}
+                  <span>
+                    <b>{s.kind === 'place' ? s.p.label : s.w.title}</b>
+                    <small>{s.kind === 'place' ? s.p.sub : s.w.sub}</small>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {place && <p className="hint ok">Épinglé sur la carte : {place.address || place.sub}</p>}
+        {meta.place && !place && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste pour l'épingler sur la carte.</p>}
+        {offline && <p className="hint">Recherche indisponible, tu peux quand même l'ajouter.</p>}
+      </div>
+      <div className="field">
+        <label htmlFor="f-where">{whereLabel}</label>
+        <input id="f-where" autoComplete="off" placeholder={wherePh} value={where} onChange={(e) => setWhere(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="f-note">Un petit mot</label>
+        <textarea id="f-note" placeholder="Pourquoi ça nous tente" value={note} onChange={(e) => setNote(e.target.value)} />
+      </div>
+      <button className="primary" disabled={!title.trim()} onClick={save}>Ajouter à notre liste</button>
+    </div>
+  )
+}
