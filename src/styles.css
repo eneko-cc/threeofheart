@@ -374,6 +374,9 @@ html.sheet-open .tabs { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .sync-dot.ok { background: #72BA2C; box-shadow: 0 0 0 4px rgba(114, 186, 44, 0.2); }
 .sync-dot.syncing { background: #FCCC60; animation: beat 0.9s ease-in-out infinite; }
 .sync-dot.offline { background: #FA610E; }
+.go { display: flex; flex-direction: column; gap: 6px; }
+.go-label { font-size: 13px; font-weight: 600; color: var(--muted); padding-left: 4px; }
+.go .secondary { margin: 0; }
 .detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 /* zones tactiles d'au moins 44 points, sans changer le dessin */
 .check { position: relative; }

@@ -63,3 +63,7 @@ export async function searchWorks(q: string, kind: 'film' | 'serie', signal?: Ab
 
 export const directionsUrl = (lat: number, lng: number, name: string) =>
   `https://maps.apple.com/?daddr=${lat},${lng}&q=${encodeURIComponent(name)}`
+
+/** Itinéraire Google Maps (ouvre l'app Google Maps si elle est installée). */
+export const googleDirectionsUrl = (lat: number, lng: number, name: string, address?: string) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address ? `${name}, ${address}` : `${lat},${lng}`)}`

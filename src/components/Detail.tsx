@@ -1,6 +1,6 @@
 import { CatIcon, cat } from '../cats'
 import { avg, type Store } from '../store'
-import { directionsUrl } from '../search'
+import { directionsUrl, googleDirectionsUrl } from '../search'
 import { burst, Hearts } from './ui'
 import { PlacePhotos } from './PlacePhotos'
 
@@ -26,7 +26,13 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
       {item.note && <p className="desc">{item.note}</p>}
       {item.address && <p className="addr">{item.address}</p>}
       {item.lat != null && item.lng != null && (
-        <a className="secondary" href={directionsUrl(item.lat, item.lng, item.title)} target="_blank" rel="noreferrer">Y aller</a>
+        <div className="go">
+          <span className="go-label">Y aller avec</span>
+          <div className="detail-actions">
+            <a className="secondary" href={directionsUrl(item.lat, item.lng, item.title)} target="_blank" rel="noreferrer">Plans</a>
+            <a className="secondary" href={googleDirectionsUrl(item.lat, item.lng, item.title, item.address)} target="_blank" rel="noreferrer">Google Maps</a>
+          </div>
+        </div>
       )}
 
       {item.done ? (
