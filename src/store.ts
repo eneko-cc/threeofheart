@@ -58,6 +58,8 @@ export function useStore() {
   // ---- connexion
   useEffect(() => {
     sb.auth.getSession().then(({ data }) => setSession(data.session))
+    // demande à iOS de ne jamais effacer le cache local de l'app
+    navigator.storage?.persist?.().catch(() => {})
     const { data } = sb.auth.onAuthStateChange((_e, s) => setSession(s))
     return () => data.subscription.unsubscribe()
   }, [])

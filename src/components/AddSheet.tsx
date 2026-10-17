@@ -6,22 +6,32 @@ import type { CatId, Item } from '../types'
 
 type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
 
+/** Saisie en cours, gardée quand on referme la feuille sans ajouter. */
+export interface Draft { c: CatId; title: string; where: string; note: string; place: Place | null; poster?: string }
+
 /** Ajout d'une idée, ou modification quand `edit` est fourni. */
-export function AddSheet({ store, initialCat, edit, onDone }: { store: Store; initialCat?: CatId; edit?: Item; onDone: (item: Item) => void }) {
-  const [c, setC] = useState<CatId>(edit?.cat ?? initialCat ?? 'resto')
-  const [title, setTitle] = useState(edit?.title ?? '')
-  const [where, setWhere] = useState(edit?.where ?? '')
-  const [note, setNote] = useState(edit?.note ?? '')
-  const [place, setPlace] = useState<Place | null>(null)
-  const [poster, setPoster] = useState<string | undefined>(edit?.poster)
+export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
+  store: Store; initialCat?: CatId; edit?: Item; draft?: Draft | null; onDraft?: (d: Draft | null) => void; onDone: (item: Item) => void
+}) {
+  const [c, setC] = useState<CatId>(edit?.cat ?? draft?.c ?? initialCat ?? 'resto')
+  const [title, setTitle] = useState(edit?.title ?? draft?.title ?? '')
+  const [where, setWhere] = useState(edit?.where ?? draft?.where ?? '')
+  const [note, setNote] = useState(edit?.note ?? draft?.note ?? '')
+  const [place, setPlace] = useState<Place | null>(draft?.place ?? null)
+  const [poster, setPoster] = useState<string | undefined>(edit?.poster ?? draft?.poster)
   const [sugg, setSugg] = useState<Suggestion[]>([])
-  const [picked, setPicked] = useState(!!edit)
+  const [picked, setPicked] = useState(!!edit || !!draft?.place || !!draft?.poster)
   const [offline, setOffline] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [fromDraft, setFromDraft] = useState(!!draft && !edit)
   const input = useRef<HTMLInputElement>(null)
   const meta = cat(c)
 
   useEffect(() => { if (!edit) setTimeout(() => input.current?.focus(), 400) }, [edit])
+  useEffect(() => {
+    if (edit || saved) return
+    onDraft?.(title.trim() || where.trim() || note.trim() ? { c, title, where, note, place, poster } : null)
+  }, [c, title, where, note, place, poster, edit, saved, onDraft])
 
   useEffect(() => {
     setSugg([])
@@ -84,6 +94,11 @@ export function AddSheet({ store, initialCat, edit, onDone }: { store: Store; in
   return (
     <div className="add">
       <h2 className="sheet-title">{edit ? 'Modifier' : 'Nouvelle idée'}</h2>
+      {fromDraft && (
+        <button className="draft-clear" onClick={() => { setFromDraft(false); setTitle(''); setWhere(''); setNote(''); setPlace(null); setPoster(undefined); setPicked(false) }}>
+          Brouillon repris · Tout effacer
+        </button>
+      )}
       <div className="cat-grid">
         {CATS.map((k) => (
           <button key={k.id} className="cat" aria-pressed={k.id === c} style={{ background: k.bg, color: k.ink }}

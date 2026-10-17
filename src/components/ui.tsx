@@ -65,7 +65,10 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
     <>
       <div className={'scrim' + (open ? ' on' : '')} onClick={onClose} />
       <div ref={ref} className={'sheet' + (open ? ' on' : '')} role="dialog" aria-modal="true" aria-hidden={!open}>
-        <button className="grab" onClick={onClose} aria-label="Fermer" />
+        <button className="grab" onClick={onClose} aria-label="Fermer" tabIndex={-1} />
+        <button className="sheet-x" onClick={onClose} aria-label="Fermer">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2.8} strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
         {open && <div className="stagger">{children}</div>}
       </div>
     </>
@@ -160,14 +163,16 @@ export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
             <span className="card-title">{item.title}</span>
             <span className="card-sub">
               {item.where || c.label}
-              {item.done ? null : <> · par {state.names[item.by]}</>}
+              {item.done ? (item.doneAt ? <> · fait le {shortDate(item.doneAt)}</> : null) : <> · par {state.names[item.by]}</>}
             </span>
           </span>
         </button>
         {item.done ? (
-          <span className="card-score" aria-label={`Moyenne ${a.toFixed(1)} sur 5`}>
-            <Heart size={14} /> {a ? a.toFixed(1) : '–'}
-          </span>
+          a ? (
+            <span className="card-score" aria-label={`Moyenne ${a.toFixed(1)} sur 5`}>
+              <Heart size={14} /> {a.toFixed(1)}
+            </span>
+          ) : <span className="card-score todo-rate">À noter</span>
         ) : onCheck ? (
           <button ref={checkBtn} className="check" aria-label="C'est fait" onClick={finish}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
@@ -177,6 +182,9 @@ export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
     </div>
   )
 }
+
+export const shortDate = (t: number) =>
+  new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', ...(new Date(t).getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) })
 
 /** Nombre qui défile jusqu'à sa valeur. */
 export function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {

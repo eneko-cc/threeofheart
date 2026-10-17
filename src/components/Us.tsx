@@ -84,9 +84,9 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
         </button>
       )}
       <div className="section-head"><h2>Sauvegarde</h2></div>
-      <div className="names">
-        <button className="secondary" onClick={exportData}>Exporter</button>
-        <button className="secondary" onClick={() => file.current?.click()}>Importer</button>
+      <div className="duo-btns">
+        <button className="soft" onClick={exportData}>Exporter</button>
+        <button className="soft" onClick={() => file.current?.click()}>Importer</button>
         <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => importData(e.target.files?.[0])} />
       </div>
       <ScreenInfo />

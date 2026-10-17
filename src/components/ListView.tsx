@@ -18,12 +18,13 @@ export function Chips({ value, onChange, only }: { value: CatId | 'all'; onChang
   )
 }
 
-export function ListView({ store, filter, setFilter, onOpen, onCheck }: {
+export function ListView({ store, filter, setFilter, onOpen, onCheck, onDraw }: {
   store: Store
   filter: CatId | 'all'
   setFilter: (f: CatId | 'all') => void
   onOpen: (id: string) => void
   onCheck: (id: string, el: HTMLElement) => void
+  onDraw: (id: string) => void
 }) {
   const { state } = store
   const [tab, setTab] = useState<'todo' | 'done'>('todo')
@@ -32,7 +33,9 @@ export function ListView({ store, filter, setFilter, onOpen, onCheck }: {
     .filter((i) => !!i.done === (tab === 'done'))
     .filter((i) => filter === 'all' || i.cat === filter)
     .filter((i) => !q || (i.title + ' ' + (i.where ?? '')).toLowerCase().includes(q.toLowerCase()))
-    .sort((a, b) => (tab === 'done' ? avg(b) - avg(a) : b.createdAt - a.createdAt))
+    .sort((a, b) => (tab === 'done' ? (b.doneAt ?? 0) - (a.doneAt ?? 0) || avg(b) - avg(a) : b.createdAt - a.createdAt))
+  // tirage au sort parmi ce qui est affiché : la catégorie et la recherche servent de filtres
+  const draw = () => { if (items.length) onDraw(items[Math.floor(Math.random() * items.length)].id) }
 
   return (
     <div className="page">
@@ -44,6 +47,17 @@ export function ListView({ store, filter, setFilter, onOpen, onCheck }: {
         <button aria-pressed={tab === 'done'} onClick={() => setTab('done')}>C'est fait</button>
       </div>
       <Chips value={filter} onChange={setFilter} />
+      <div className="list-head">
+        <span>{items.length} {items.length > 1 ? 'idées' : 'idée'}</span>
+        {tab === 'todo' && items.length > 1 && (
+          <button className="draw-btn" onClick={draw}>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="4" /><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" /><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" /><circle cx="12" cy="12" r="1.3" fill="currentColor" />
+            </svg>
+            Tirer au sort
+          </button>
+        )}
+      </div>
       <div className="list" key={tab + filter}>
         {items.map((i, k) => (
           <ItemCard key={i.id} item={i} state={state} index={k} onOpen={() => onOpen(i.id)} onCheck={(el) => onCheck(i.id, el)} />
