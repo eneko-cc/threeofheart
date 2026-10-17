@@ -259,7 +259,7 @@ export function burst(el: Element, count = 16) {
   w.style.top = `${r.top + r.height / 2 - 11}px`
   const cols = document.documentElement.dataset.design === 'v2'
     ? ['#DE3566', '#FCCC60', '#FF9BAE', '#72BA2C', '#FA610E']
-    : ['#E58AA5', '#6FA3CF', '#F4B6C8', '#6DB58A', '#1F4D3A']
+    : ['#C8F135', '#EF8E01', '#FFD43B', '#FFFFFF', '#8FB4FF']
   const spread = count > 8 ? 1 : 0.45
   for (let k = 0; k < count; k++) {
     const a = Math.random() * Math.PI * 2

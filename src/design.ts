@@ -1,4 +1,4 @@
-// Deux styles d'interface : Version 1 (pastels) et Version Ju (palette de Ju).
+// Deux styles d'interface : Mode Toni (bleu, carotte, citron vert) et Mode Ju (palette de Ju).
 export type Design = 'v1' | 'v2'
 const KEY = 'toh-design'
 
@@ -8,7 +8,7 @@ export function getDesign(): Design {
 
 export function applyDesign(d: Design = getDesign()) {
   document.documentElement.dataset.design = d
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', d === 'v2' ? '#FFF6F1' : '#16302A')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', d === 'v2' ? '#FFF6F1' : '#0038BD')
 }
 
 export function setDesign(d: Design) {

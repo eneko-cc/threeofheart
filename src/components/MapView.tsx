@@ -14,10 +14,7 @@ const STYLE = 'https://tiles.openfreemap.org/styles/positron'
 function palette() {
   if (document.documentElement.dataset.design === 'v2')
     return { land: '#FFF6F1', water: '#FFC9D3', park: '#DCE3B0', road: '#FFFFFF', major: '#FFFFFF', building: '#FBE6DC', text: '#8B5664' }
-  const dark = matchMedia('(prefers-color-scheme: dark)').matches
-  return dark
-    ? { land: '#14291F', water: '#2B4D66', park: '#1E4434', road: '#1C382C', major: '#24493A', building: '#183326', text: '#86A193' }
-    : { land: '#FBF3F5', water: '#B9D6EF', park: '#CFE6D7', road: '#FFFFFF', major: '#FFFFFF', building: '#F4E6EB', text: '#8A9B93' }
+  return { land: '#0A3CB8', water: '#062C8F', park: '#1C55C9', road: '#2A5FD2', major: '#3D6FE0', building: '#0E41BF', text: '#BCCBF5' }
 }
 
 const FR_NAME = ['coalesce', ['get', 'name:fr'], ['get', 'name_int'], ['get', 'name']]

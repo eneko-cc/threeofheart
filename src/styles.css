@@ -525,24 +525,24 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-done: #3B0F22;
 }
 :root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: clamp(42px, 12.6vw, 56px); letter-spacing: -0.01em; color: #DE3566; }
-:root[data-design='v2'] .big { font-weight: 800; }
+:root[data-design] .big { font-weight: 800; }
 :root[data-design='v2'] .hero h2 { font-size: clamp(25px, 7.4vw, 32px); font-weight: 800; }
 :root[data-design='v2'] .hero p { opacity: 0.85; }
-:root[data-design='v2'] .tile-name { font-weight: 800; }
-:root[data-design='v2'] .card-title { font-weight: 700; }
-:root[data-design='v2'] .card-sub { opacity: 0.8; }
-:root[data-design='v2'] :is(.tile, .card, .best) :is(.tag, .tile-ic, .bubble, .card-score, .check) { background: var(--on); color: inherit; border-color: transparent; }
+:root[data-design] .tile-name { font-weight: 800; }
+:root[data-design] .card-title { font-weight: 700; }
+:root[data-design] .card-sub { opacity: 0.8; }
+:root[data-design] :is(.tile, .card, .best) :is(.tag, .tile-ic, .bubble, .card-score, .check) { background: var(--on); color: inherit; border-color: transparent; }
 :root[data-design='v2'] :is(.tile, .card, .best)[style*='--bg-resto'] { --on: rgba(255, 255, 255, 0.22); }
 :root[data-design='v2'] :is(.tile, .card)[style*='--bg-resto'] .card-score svg { color: #FFFFFF; }
-:root[data-design='v2'] .check:active, :root[data-design='v2'] .swipe.gone .check { background: var(--done); color: var(--done-ink); }
+:root[data-design] .check:active, :root[data-design] .swipe.gone .check { background: var(--done); color: var(--done-ink); }
 /* dans la liste : cartes blanches, la couleur de la catégorie reste sur la pastille (plus calme à parcourir) */
-:root[data-design='v2'] .list .card { background: var(--surface) !important; color: var(--fg) !important; box-shadow: 0 6px 16px -12px rgba(120, 20, 55, 0.35); }
-:root[data-design='v2'] .list .card .bubble { background: var(--cb); color: var(--ci); }
-:root[data-design='v2'] .list .card :is(.check, .card-score) { background: var(--surface-2); color: var(--fg); }
-:root[data-design='v2'] .list .card .card-score svg { color: var(--heart); }
+:root[data-design] .list .card { background: var(--surface) !important; color: var(--fg) !important; box-shadow: 0 6px 16px -12px rgba(120, 20, 55, 0.35); }
+:root[data-design] .list .card .bubble { background: var(--cb); color: var(--ci); }
+:root[data-design] .list .card :is(.check, .card-score) { background: var(--surface-2); color: var(--fg); }
+:root[data-design] .list .card .card-score svg { color: var(--heart); }
 .card-score.todo-rate { font-size: 13px; font-weight: 700; }
-:root[data-design='v2'] .list .card .card-sub { color: var(--muted); opacity: 1; }
-:root[data-design='v2'] .search, :root[data-design='v2'] .chip { border-color: var(--line); }
+:root[data-design] .list .card .card-sub { color: var(--muted); opacity: 1; }
+:root[data-design] .search, :root[data-design] .chip { border-color: var(--line); }
 :root[data-design='v2'] .ghost.danger { color: #C4224F; }
 :root[data-design='v2'] .stat { color: var(--card-ink); }
 :root[data-design='v2'] .stat:nth-child(2) { color: #4A2A00; }
@@ -558,3 +558,50 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
 .design-pick button[aria-pressed='true'] { border-color: var(--fg); transform: translateY(-2px); }
 .swatches { display: flex; gap: 4px; }
 .swatches i { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08); }
+
+/* ------------------------------------------------------------------ */
+/* Mode Toni : bleu persan, carotte, citron vert et platine.           */
+/* Fond bleu franc, blocs de couleur vive, encre marine bien lisible.  */
+/* ------------------------------------------------------------------ */
+:root[data-design='v1'] {
+  color-scheme: dark;
+  --bg: #0038BD; --surface: #174BD0; --surface-2: #0A2E9E; --fg: #FFFFFF; --muted: #BCCBF5; --line: #3263DA;
+  --fir: #EF8E01; --fir-ink: #001A63; --accent: #C8F135; --card-ink: #001A63;
+  --shadow: 0 14px 30px -16px rgba(0, 10, 60, 0.7);
+  --band: #0038BD;
+  --nav: #001A63; --nav-ink: rgba(255, 255, 255, 0.72); --blob: #C8F135; --blob-ink: #001A63; --fab: #C8F135; --fab-ink: #001A63;
+  --heart: #C8F135; --done: #C8F135; --done-ink: #001A63;
+  --toast: #001A63; --toast-ink: #FFFFFF; --toast-heart: #C8F135;
+  --w-yes: #C8F135; --w-yes2: #2FBF71; --w-yes-ink: #001A63; --w-no: #EF8E01; --w-no2: #FFB547; --w-no-ink: #001A63; --w-yes-ink2: #C8F135; --w-no-ink2: #FFB547;
+  --c-pink: #EF8E01; --c-blue: #C8F135; --c-mint: #EEEEEE; --c-butter: #FFD43B; --c-lilac: #8FB4FF; --c-sand: #2FBF71;
+  --s1: #C8F135; --s2: #EF8E01; --s3: #FFFFFF;
+  --on: rgba(255, 255, 255, 0.55);
+  --bg-resto: #EF8E01;    --ink-resto: #1F1000;
+  --bg-activite: #C8F135; --ink-activite: #0F2400;
+  --bg-event: #FFD43B;    --ink-event: #2A2000;
+  --bg-film: #EEEEEE;     --ink-film: #0038BD;
+  --bg-serie: #8FB4FF;    --ink-serie: #001A63;
+  --bg-todo: #2FBF71;     --ink-todo: #002A12;
+  --pin-resto: #EF8E01; --pin-activite: #C8F135; --pin-event: #FFD43B; --pin-film: #EEEEEE; --pin-serie: #8FB4FF; --pin-todo: #2FBF71; --pin-done: #FFFFFF;
+}
+:root[data-design='v1'] .brand-title { font-weight: 900; letter-spacing: -0.045em; color: #C8F135; }
+:root[data-design='v1'] .section-head h2, :root[data-design='v1'] h1.big:not(.brand-title) { color: #FFFFFF; }
+:root[data-design='v1'] .tab-blob { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05); }
+:root[data-design='v1'] .ghost.danger, :root[data-design='v1'] .soft.danger { color: #FFB4A0; }
+:root[data-design='v1'] .hint.ok { color: #C8F135; }
+:root[data-design='v1'] :focus-visible { outline-color: #C8F135; }
+:root[data-design='v1'] .scrim { background: rgba(0, 12, 50, 0.55); }
+:root[data-design='v1'] ::placeholder { color: #9FB3EC; opacity: 1; }
+:root[data-design='v1'] .chip[aria-pressed='true'] { background: #C8F135; border-color: #C8F135; color: #001A63; }
+:root[data-design='v1'] .seg .knob { background: #C8F135; }
+:root[data-design='v1'] .seg button[aria-pressed='true'] { color: #001A63; }
+:root[data-design='v1'] .primary.saved, :root[data-design='v1'] .primary.saved:disabled { background: #C8F135; color: #001A63; }
+:root[data-design='v1'] .wheel { box-shadow: 0 0 0 6px #001A63, 0 18px 40px -18px rgba(0, 0, 0, 0.6); }
+:root[data-design='v1'] .wheel-arrow { background: #FFFFFF; }
+:root[data-design='v1'] .wheel-hub { background: #001A63; color: #C8F135; }
+:root[data-design='v1'] .yn-coin { background: #001A63; box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.5); }
+:root[data-design='v1'] .av { color: #001A63; }
+:root[data-design='v1'] .stat:nth-child(3) { color: #001A63; }
+:root[data-design='v1'] .card-score { font-weight: 800; }
+:root[data-design='v1'] .cat { opacity: 0.82; border-color: transparent; background-clip: padding-box; }
+:root[data-design='v1'] .cat[aria-pressed='true'] { opacity: 1; border-color: #FFFFFF; }

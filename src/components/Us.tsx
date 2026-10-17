@@ -69,12 +69,12 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
       <div className="section-head"><h2>Style de l'app</h2></div>
       <div className="design-pick">
         <button aria-pressed={design === 'v1'} onClick={() => pick('v1')}>
-          <span className="swatches"><i style={{ background: '#F8C9D6' }} /><i style={{ background: '#C3DDF2' }} /><i style={{ background: '#1F4D3A' }} /></span>
-          Version 1
+          <span className="swatches"><i style={{ background: '#0038BD' }} /><i style={{ background: '#EF8E01' }} /><i style={{ background: '#C8F135' }} /><i style={{ background: '#EEEEEE' }} /></span>
+          Mode Toni
         </button>
         <button aria-pressed={design === 'v2'} onClick={() => pick('v2')}>
           <span className="swatches"><i style={{ background: '#DE3566' }} /><i style={{ background: '#FCCC60' }} /><i style={{ background: '#72BA2C' }} /><i style={{ background: '#FF9B3D' }} /></span>
-          Palette de Ju
+          Mode Ju
         </button>
       </div>
 
