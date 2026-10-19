@@ -43,7 +43,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
     const t = setTimeout(async () => {
       try {
         if (meta.place) {
-          const ps = await searchPlaces(title.trim(), ctrl.signal)
+          const ps = await searchPlaces(title.trim(), ctrl.signal, { food: c === 'resto' })
           setSugg(ps.map((p) => ({ kind: 'place', p })))
         } else {
           const ws = await searchWorks(title.trim(), c as 'film' | 'serie', ctrl.signal)
@@ -146,7 +146,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
         )}
         {place && <p className="hint ok">Épinglé sur la carte{place.address || place.sub ? ` : ${place.address || place.sub}` : ''}</p>}
         {!place && edit?.lat != null && meta.place && <p className="hint ok">Toujours épinglé sur la carte. Tape un autre lieu pour le déplacer.</p>}
-        {meta.place && !place && edit?.lat == null && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste, sinon on cherchera l'adresse pour l'épingler.</p>}
+        {meta.place && !place && edit?.lat == null && title.length > 2 && !offline && <p className="hint">{sugg.length ? 'Pas le bon ? Ajoute le quartier ou la rue, ex. « Nomas 11e ».' : "Choisis un lieu dans la liste, sinon on cherchera l'adresse pour l'épingler."}</p>}
         {offline && <p className="hint">Recherche indisponible, tu peux quand même l'ajouter.</p>}
         {meta.place && title.trim().length > 1 && (
           <button className="link-btn" onClick={() => { setSugg([]); setPicking(true) }}>

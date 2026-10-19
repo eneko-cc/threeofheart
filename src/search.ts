@@ -39,6 +39,15 @@ export async function geocode(q: string, ms = 4000): Promise<Place | undefined> 
   }
 }
 
+const KINDS: Record<string, string> = {
+  restaurant: 'Restaurant', cafe: 'Café', bar: 'Bar', pub: 'Pub', fast_food: 'Fast-food', ice_cream: 'Glacier', bakery: 'Boulangerie',
+  pastry: 'Pâtisserie', biergarten: 'Bar', food_court: 'Food court', wine_bar: 'Bar à vin', nightclub: 'Club', cinema: 'Cinéma', theatre: 'Théâtre',
+  museum: 'Musée', gallery: 'Galerie', arts_centre: 'Lieu culturel', attraction: 'Attraction', park: 'Parc', garden: 'Jardin', zoo: 'Zoo',
+  bowling_alley: 'Bowling', escape_game: 'Escape game', sports_centre: 'Sport', swimming_pool: 'Piscine', viewpoint: 'Point de vue',
+  hotel: 'Hôtel', concert_hall: 'Salle de concert', events_venue: 'Salle', marketplace: 'Marché', house: 'Adresse', street: 'Rue',
+}
+const FOOD = new Set(['restaurant', 'cafe', 'bar', 'pub', 'fast_food', 'ice_cream', 'bakery', 'pastry', 'biergarten', 'food_court', 'wine_bar'])
+
 function toPlace(f: any, q = ''): Place {
   const p = f.properties ?? {}
   const street = [p.housenumber, p.street].filter(Boolean).join(' ')
@@ -54,12 +63,62 @@ function toPlace(f: any, q = ''): Place {
   }
 }
 
-export async function searchPlaces(q: string, signal?: AbortSignal): Promise<Place[]> {
-  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${PARIS.lat}&lon=${PARIS.lng}&limit=6&lang=fr`
+// Île-de-France d'abord, puis la France entière : jamais de résultat à l'autre bout du monde.
+const IDF = '1.4,48.1,3.6,49.25'
+const FRANCE = '-5.3,41.3,9.7,51.2'
+
+/** Où on est, seulement si l'iPhone l'a déjà autorisé (aucune demande surprise). */
+let here: { lat: number; lng: number } | null = null
+async function whereAmI() {
+  try {
+    const perm = await navigator.permissions?.query({ name: 'geolocation' as PermissionName })
+    if (perm?.state !== 'granted') return
+    navigator.geolocation.getCurrentPosition((g) => { here = { lat: g.coords.latitude, lng: g.coords.longitude } }, () => {}, { maximumAge: 600000, timeout: 5000 })
+  } catch {}
+}
+void whereAmI()
+
+const fmtKm = (d: number) => (d < 1 ? `${Math.round(d * 1000 / 50) * 50} m` : `${d.toFixed(d < 10 ? 1 : 0).replace('.', ',')} km`)
+
+async function photon(q: string, bbox: string, center: { lat: number; lng: number }, signal?: AbortSignal) {
+  const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${center.lat}&lon=${center.lng}&bbox=${bbox}&limit=15&lang=fr`
   const res = await fetch(url, { signal })
   if (!res.ok) throw new Error('photon')
-  const data = await res.json()
-  return (data.features ?? []).map((f: any) => toPlace(f, q))
+  return ((await res.json()).features ?? []) as any[]
+}
+
+/**
+ * Recherche de lieux pensée pour Paris : on cherche en Île-de-France (puis en France si rien),
+ * on classe par ressemblance du nom, type de lieu et proximité, et on affiche type, quartier et distance.
+ */
+export async function searchPlaces(q: string, signal?: AbortSignal, opts: { food?: boolean } = {}): Promise<Place[]> {
+  const center = here ?? PARIS
+  let feats = await photon(q, IDF, center, signal)
+  if (feats.length < 3) feats = [...feats, ...(await photon(q, FRANCE, center, signal))]
+  const nq = norm(q)
+  const seen = new Set<string>()
+  const scored = feats
+    .filter((f) => !f.properties?.countrycode || f.properties.countrycode === 'FR')
+    .map((f) => {
+      const pl = toPlace(f, q)
+      const pr = f.properties ?? {}
+      const name = norm(pr.name ?? '')
+      const d = km(pl, center)
+      let score = Math.min(d, 60) / 3 // un peu plus près, un peu mieux
+      if (name === nq) score -= 30
+      else if (name.startsWith(nq)) score -= 20
+      else if (name.includes(nq)) score -= 10
+      if (!pr.name) score += 8 // simple rue ou ville
+      if (opts.food) score += FOOD.has(pr.osm_value) ? -12 : 4
+      else if (KINDS[pr.osm_value] && pr.osm_value !== 'house' && pr.osm_value !== 'street') score -= 4
+      const kind = KINDS[pr.osm_value]
+      const quartier = arrondissement(pr.postcode) ?? pr.district ?? pr.city
+      const sub = [kind, [pr.housenumber, pr.street].filter(Boolean).join(' ') || undefined, quartier, fmtKm(d)].filter(Boolean).join(' · ')
+      return { pl: { ...pl, sub }, score, key: `${name}|${pl.lat.toFixed(3)}|${pl.lng.toFixed(3)}` }
+    })
+    .sort((a, b) => a.score - b.score)
+    .filter((x) => (seen.has(x.key) ? false : (seen.add(x.key), true)))
+  return scored.slice(0, 6).map((x) => x.pl)
 }
 
 /** Adresse la plus proche d'un point posé à la main sur la carte. */
