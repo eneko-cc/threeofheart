@@ -51,7 +51,7 @@ function pinEl(color: string, done: boolean, delay: number) {
   const el = document.createElement('button')
   el.className = 'pin' + (done ? ' done' : '')
   const glyph = done
-    ? '<path d="M12.5 17.5l4.5 4.5 8.5-9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>'
+    ? '<path d="M12.5 17.5l4.5 4.5 8.5-9" fill="none" style="stroke:var(--pin-done-ink, #fff)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>'
     : `<g transform="translate(10.5 8.5) scale(.7)"><path d="${HEART_PATH}" fill="#fff"/></g>`
   el.innerHTML = `<span class="pin-in" style="animation-delay:${delay}ms"><svg viewBox="0 0 38 46"><path d="M19 45C8 33 2 25 2 17a17 17 0 0 1 34 0c0 8-6 16-17 28z" style="fill:${done ? 'var(--pin-done)' : color}" stroke="#fff" stroke-width="2.5"/>${glyph}</svg></span>`
   return el

@@ -63,6 +63,14 @@ export default function App() {
   const draft = useRef<Draft | null>(null)
   const sheetRef = useRef<SheetState>(null)
   sheetRef.current = sheet
+  /** Tirer vers le bas sur l'accueil : nouvelle version de l'app s'il y en a une, et dernières idées de Supabase. */
+  const refresh = useCallback(async () => {
+    store.refresh()
+    const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined)
+    await reg?.update().catch(() => {})
+    toast(store.session ? 'À jour' : 'À jour sur ce téléphone')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.refresh, store.session, toast])
   const close = useCallback(() => {
     if (sheetRef.current?.kind === 'add' && draft.current) toast('Brouillon gardé pour plus tard')
     setSheet(null)
@@ -78,7 +86,7 @@ export default function App() {
   return (
     <div className="app">
       <main>
-        <ScrollView hidden={tab !== 'home'} title="Threeofheart" dx={dx}>
+        <ScrollView hidden={tab !== 'home'} title="Threeofheart" dx={dx} onRefresh={refresh}>
           <Home store={store} onOpen={open} onCheck={check} onYesNo={() => setSheet({ kind: 'yesno' })}
             onCat={(c) => { setFilter(c); go('list') }} />
         </ScrollView>

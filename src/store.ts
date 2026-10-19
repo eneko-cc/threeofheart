@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchAll, pushItems, pushSetting, readPending, sb, whoIs, writePending, type Row, type Session } from './sync'
+import { fetchAll, pushItems, pushSetting, readPending, sb, setActor, whoIs, writePending, type Row, type Session } from './sync'
 import type { AppState, Item } from './types'
 import importData from './data/import.json'
 
@@ -48,6 +48,11 @@ export function useStore() {
   const known = useRef<Map<string, string> | null>(null)
   const knownNames = useRef<string>('')
   const flushing = useRef(false)
+  // tirer vers le bas sur l'accueil : on refait l'échange complet avec Supabase
+  const [tick, setTick] = useState(0)
+  const refresh = useCallback(() => setTick((t) => t + 1), [])
+  // qui fait les modifs, pour que les notifications partent vers l'autre
+  useEffect(() => setActor(state.me), [state.me])
 
   useEffect(() => {
     try {
@@ -162,7 +167,7 @@ export function useStore() {
       window.removeEventListener('online', again)
       document.removeEventListener('visibilitychange', again)
     }
-  }, [session, flush])
+  }, [session, flush, tick])
 
   // ---- chaque changement local part sur Supabase
   useEffect(() => {
@@ -204,7 +209,7 @@ export function useStore() {
   }, [])
   const signOut = useCallback(async () => { await sb.auth.signOut() }, [])
 
-  return { state, upsert, patch, remove, clearExamples, setNames, setMe, replaceAll, session, sync, signIn, signOut }
+  return { state, upsert, patch, remove, clearExamples, setNames, setMe, replaceAll, session, sync, signIn, signOut, refresh }
 }
 
 export type Store = ReturnType<typeof useStore>

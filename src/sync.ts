@@ -37,11 +37,23 @@ export function writePending(p: Record<string, Item | null>) {
   try { localStorage.setItem(PENDING, JSON.stringify(p)) } catch {}
 }
 
+let actor: 'a' | 'b' = 'a'
+let hasActor = true
+export const setActor = (who: 'a' | 'b') => { actor = who }
+
 export async function pushItems(p: Record<string, Item | null>) {
   const now = new Date().toISOString()
-  const rows = Object.entries(p).map(([id, it]) => (it ? { id, data: it, deleted: false, updated_at: now } : { id, data: {}, deleted: true, updated_at: now }))
+  const rows = Object.entries(p).map(([id, it]) => ({
+    id, data: it ?? {}, deleted: !it, updated_at: now,
+    // la colonne « actor » n'existe qu'une fois le script des notifications passé dans Supabase
+    ...(hasActor ? { actor } : {}),
+  }))
   if (!rows.length) return
-  const { error } = await sb.from('items').upsert(rows)
+  let { error } = await sb.from('items').upsert(rows)
+  if (error && hasActor && /actor/.test(error.message)) {
+    hasActor = false
+    ;({ error } = await sb.from('items').upsert(rows.map(({ actor: _, ...r }) => r)))
+  }
   if (error) throw error
 }
 
@@ -58,4 +70,41 @@ export async function fetchAll() {
   if (items.error) throw items.error
   if (settings.error) throw settings.error
   return { items: (items.data ?? []) as Row[], settings: (settings.data ?? []) as SettingRow[] }
+}
+
+// ---- notifications : chaque téléphone s'inscrit une fois, Supabase prévient l'autre à chaque ajout, coche ou note
+export const VAPID_PUBLIC = 'BGy467YuEFeBOKR12T_QejOrDL9WlPxtqDqxX-noZg3IRosg29kosa2Gv0unXVA_RA7GTcI22w_xVdRgVBMKVKo'
+
+const b64 = (s: string) => {
+  const p = (s + '='.repeat((4 - (s.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/')
+  return Uint8Array.from(atob(p), (c) => c.charCodeAt(0))
+}
+
+export type PushState = 'unsupported' | 'install' | 'off' | 'on' | 'denied'
+
+export async function pushState(): Promise<PushState> {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+    // sur iPhone, les notifications n'existent que pour l'app ajoutée à l'écran d'accueil
+    return /iPhone|iPad/.test(navigator.userAgent) ? 'install' : 'unsupported'
+  }
+  if (Notification.permission === 'denied') return 'denied'
+  const reg = await navigator.serviceWorker.ready
+  return (await reg.pushManager.getSubscription()) && Notification.permission === 'granted' ? 'on' : 'off'
+}
+
+export async function enablePush(who: 'a' | 'b') {
+  if ((await Notification.requestPermission()) !== 'granted') throw new Error('denied')
+  const reg = await navigator.serviceWorker.ready
+  const sub = (await reg.pushManager.getSubscription()) ?? (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID_PUBLIC) }))
+  const json = sub.toJSON()
+  const { error } = await sb.from('push_subs').upsert({ endpoint: json.endpoint, who, sub: json, updated_at: new Date().toISOString() })
+  if (error) throw error
+}
+
+export async function disablePush() {
+  const reg = await navigator.serviceWorker.ready
+  const sub = await reg.pushManager.getSubscription()
+  if (!sub) return
+  await sb.from('push_subs').delete().eq('endpoint', sub.endpoint)
+  await sub.unsubscribe()
 }

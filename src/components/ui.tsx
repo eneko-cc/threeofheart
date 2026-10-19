@@ -208,10 +208,15 @@ export function CountUp({ value, decimals = 0 }: { value: number; decimals?: num
   return <>{shown.toFixed(decimals)}</>
 }
 
-/** Vue défilante avec grand titre qui se replie en barre compacte. */
-export function ScrollView({ hidden, title, dx, children }: { hidden: boolean; title: string; dx: number; children: ReactNode }) {
+/** Vue défilante avec grand titre qui se replie en barre compacte ; avec `onRefresh`, on tire vers le bas pour rafraîchir. */
+export function ScrollView({ hidden, title, dx, onRefresh, children }: { hidden: boolean; title: string; dx: number; onRefresh?: () => Promise<void> | void; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null)
+  const inner = useRef<HTMLDivElement>(null)
   const [compact, setCompact] = useState(false)
+  const [pull, setPull] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const refreshRef = useRef(onRefresh)
+  refreshRef.current = onRefresh
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -227,10 +232,56 @@ export function ScrollView({ hidden, title, dx, children }: { hidden: boolean; t
     el.addEventListener('scroll', on, { passive: true })
     return () => el.removeEventListener('scroll', on)
   }, [])
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !onRefresh) return
+    const TRIGGER = 80
+    let y0: number | null = null
+    let d = 0
+    let busy = false
+    const start = (e: TouchEvent) => { y0 = !busy && el.scrollTop <= 0 ? e.touches[0].clientY : null; d = 0 }
+    const move = (e: TouchEvent) => {
+      if (y0 == null) return
+      const dy = e.touches[0].clientY - y0
+      if (dy <= 0) { if (d) { d = 0; setPull(0) } return }
+      e.preventDefault()
+      d = Math.min(dy * 0.5, 120)
+      setPull(d)
+    }
+    const end = async () => {
+      if (y0 == null) return
+      y0 = null
+      if (d < TRIGGER) { setPull(0); return }
+      busy = true
+      setLoading(true); setPull(64)
+      navigator.vibrate?.(10)
+      try { await Promise.all([refreshRef.current?.(), new Promise((r) => setTimeout(r, 900))]) } finally {
+        busy = false
+        setLoading(false); setPull(0)
+      }
+    }
+    el.addEventListener('touchstart', start, { passive: true })
+    el.addEventListener('touchmove', move, { passive: false })
+    el.addEventListener('touchend', end)
+    el.addEventListener('touchcancel', end)
+    return () => {
+      el.removeEventListener('touchstart', start)
+      el.removeEventListener('touchmove', move)
+      el.removeEventListener('touchend', end)
+      el.removeEventListener('touchcancel', end)
+    }
+  }, [!!onRefresh])
   return (
     <section ref={ref} className="view" hidden={hidden} style={{ ['--dx' as string]: `${dx}px` }}>
       <div className={'minibar' + (compact ? ' on' : '')} aria-hidden={!compact}>{title}</div>
-      {children}
+      {onRefresh && (
+        <div className={'ptr' + (loading ? ' loading' : '') + (pull >= 80 ? ' ready' : '')} style={{ opacity: Math.min(1, pull / 60), transform: `translateY(${pull * 0.45}px) rotate(${pull * 3}deg)` }} aria-hidden={!loading}>
+          <Heart size={22} />
+        </div>
+      )}
+      <div ref={inner} className={'ptr-body' + (pull ? ' pulling' : '')} style={pull ? { transform: `translateY(${pull}px)` } : undefined}>
+        {children}
+      </div>
     </section>
   )
 }

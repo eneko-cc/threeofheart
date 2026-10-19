@@ -4,6 +4,7 @@ import { avg, type Store } from '../store'
 import type { AppState } from '../types'
 import { CountUp } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
+import { disablePush, enablePush, pushState, type PushState } from '../sync'
 
 export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: () => void) => void }) {
   const { state, clearExamples, replaceAll } = store
@@ -65,6 +66,7 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
 
       <div className="section-head"><h2>Synchro</h2></div>
       <SyncBox store={store} />
+      {store.session && <NotifBox store={store} toast={toast} />}
 
       <div className="section-head"><h2>Style de l'app</h2></div>
       <div className="design-pick">
@@ -89,7 +91,6 @@ export function Us({ store, toast }: { store: Store; toast: (m: string, undo?: (
         <button className="soft" onClick={() => file.current?.click()}>Importer</button>
         <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => importData(e.target.files?.[0])} />
       </div>
-      <ScreenInfo />
       {!store.session && <p className="note">Tant que tu n'es pas connecté, vos idées restent sur ce téléphone.</p>}
     </div>
   )
@@ -132,17 +133,40 @@ function SyncBox({ store }: { store: Store }) {
   )
 }
 
-/** Petite ligne de mesure pour régler l'affichage sur chaque iPhone. */
-function ScreenInfo() {
-  const [t, setT] = useState('')
-  useEffect(() => {
-    const probe = document.createElement('div')
-    probe.style.cssText = 'position:fixed;top:0;left:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);visibility:hidden'
-    document.body.appendChild(probe)
-    const cs = getComputedStyle(probe)
-    const app = (navigator as { standalone?: boolean }).standalone || matchMedia('(display-mode: standalone)').matches
-    setT(`${app ? 'app' : 'safari'} · fenêtre ${innerWidth}×${innerHeight} · écran ${screen.width}×${screen.height} · page ${Math.round(document.body.getBoundingClientRect().height)} · marges ${parseInt(cs.paddingTop)}/${parseInt(cs.paddingBottom)}`)
-    probe.remove()
-  }, [])
-  return <p className="screen-info">{t}</p>
+function NotifBox({ store, toast }: { store: Store; toast: (m: string) => void }) {
+  const [st, setSt] = useState<PushState | null>(null)
+  const [busy, setBusy] = useState(false)
+  useEffect(() => { pushState().then(setSt).catch(() => setSt('unsupported')) }, [])
+  const other = store.state.names[store.state.me === 'a' ? 'b' : 'a']
+  if (!st) return null
+  const on = async () => {
+    setBusy(true)
+    try { await enablePush(store.state.me); setSt('on'); toast('Notifications activées') } catch (e) {
+      if ((e as Error).message === 'denied') setSt('denied')
+      else toast("Impossible d'activer pour l'instant")
+    }
+    setBusy(false)
+  }
+  const off = async () => { setBusy(true); try { await disablePush(); setSt('off') } catch {} setBusy(false) }
+
+  if (st === 'on') {
+    return (
+      <div className="sync on">
+        <span className="sync-dot ok" aria-hidden="true" />
+        <span className="sync-txt"><b>Notifications activées</b><small>Quand {other} ajoute, coche ou note une idée</small></span>
+        <button className="ghost" onClick={off} disabled={busy}>Couper</button>
+      </div>
+    )
+  }
+  return (
+    <div className="sync">
+      <p className="sync-lead">
+        {st === 'install' ? "Ajoute l'app à l'écran d'accueil (Partager, puis « Sur l'écran d'accueil ») pour recevoir les notifications."
+          : st === 'unsupported' ? 'Ce navigateur ne gère pas les notifications.'
+          : st === 'denied' ? 'Notifications refusées. Pour les remettre : Réglages, Notifications, Three of Heart.'
+          : `Sois prévenu quand ${other} ajoute, coche ou note une idée.`}
+      </p>
+      {st === 'off' && <button className="primary" onClick={on} disabled={busy}>{busy ? 'Activation…' : 'Activer les notifications'}</button>}
+    </div>
+  )
 }

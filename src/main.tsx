@@ -36,10 +36,15 @@ const update = registerSW({
   immediate: true,
   onRegisteredSW(_url, reg) {
     if (!reg) return
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update() })
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return
+      reg.update()
+      ;(navigator as { clearAppBadge?: () => Promise<void> }).clearAppBadge?.().catch(() => {})
+    })
   },
 })
 void update
+;(navigator as { clearAppBadge?: () => Promise<void> }).clearAppBadge?.().catch(() => {})
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
