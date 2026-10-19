@@ -53,6 +53,9 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
         </section>
       )}
       {item.lat == null && item.address && <p className="addr"><Ic d={PIN} size={16} />{item.address}</p>}
+      {item.lat == null && c.place && (
+        <button className="go-btn" onClick={onEdit}><Ic d={PIN} />Pas encore sur la carte · Le placer</button>
+      )}
 
       {item.done ? (
         <>

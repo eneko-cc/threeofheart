@@ -18,6 +18,27 @@ function arrondissement(postcode?: string) {
   return n === 1 ? '1er' : `${n}e`
 }
 
+const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
+  Math.hypot((a.lat - b.lat) * 111, (a.lng - b.lng) * 111 * Math.cos((a.lat * Math.PI) / 180))
+
+const norm = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
+
+/** Premier lieu trouvé à moins de 25 km de Paris, pour épingler une idée tapée sans choisir dans la liste. */
+export async function geocode(q: string, ms = 4000): Promise<Place | undefined> {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), ms)
+  try {
+    // le nom trouvé doit vraiment correspondre à ce qui a été tapé (évite d'épingler « un bowling » au hasard)
+    const words = norm(q).split(' ').filter((w) => w.length > 2)
+    return (await searchPlaces(q, ctrl.signal)).find((p) => km(p, PARIS) < 25 && words.length > 0
+      && words.every((w) => norm(`${p.label} ${p.address}`).includes(w)) && norm(p.label).length <= norm(q).length + 12)
+  } catch {
+    return undefined
+  } finally {
+    clearTimeout(t)
+  }
+}
+
 export async function searchPlaces(q: string, signal?: AbortSignal): Promise<Place[]> {
   const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${PARIS.lat}&lon=${PARIS.lng}&limit=6&lang=fr`
   const res = await fetch(url, { signal })

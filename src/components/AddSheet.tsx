@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { CATS, CatIcon, cat } from '../cats'
 import { newId, type Store } from '../store'
-import { searchPlaces, searchWorks, type Place, type Work } from '../search'
+import { geocode, searchPlaces, searchWorks, type Place, type Work } from '../search'
 import type { CatId, Item } from '../types'
 
 type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
@@ -20,7 +20,8 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
   const [place, setPlace] = useState<Place | null>(draft?.place ?? null)
   const [poster, setPoster] = useState<string | undefined>(edit?.poster ?? draft?.poster)
   const [sugg, setSugg] = useState<Suggestion[]>([])
-  const [picked, setPicked] = useState(!!edit || !!draft?.place || !!draft?.poster)
+  // une idée de lieu pas encore épinglée rouvre avec les suggestions, pour la placer facilement
+  const [picked, setPicked] = useState((!!edit && !(cat(edit.cat).place && edit.lat == null)) || !!draft?.place || !!draft?.poster)
   const [offline, setOffline] = useState(false)
   const [saved, setSaved] = useState(false)
   const [fromDraft, setFromDraft] = useState(!!draft && !edit)
@@ -67,16 +68,20 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
     }
   }
 
-  const save = () => {
+  const save = async () => {
+    setSaved(true)
     // en modification, on garde l'épingle d'origine tant qu'aucun nouveau lieu n'est choisi
-    const geo = place ? { lat: place.lat, lng: place.lng, address: place.address }
+    let found = place
+    // lieu tapé sans le choisir dans la liste : on le cherche quand même pour l'épingler
+    if (!found && meta.place && edit?.lat == null) found = (await geocode(title.trim())) ?? null
+    const geo = found ? { lat: found.lat, lng: found.lng, address: found.address }
       : edit?.lat != null ? { lat: edit.lat, lng: edit.lng, address: edit.address } : {}
     const item: Item = {
       ...edit,
       id: edit?.id ?? newId(),
       title: title.trim(),
       cat: c,
-      where: where.trim() || undefined,
+      where: where.trim() || (!place && found ? found.where || undefined : undefined),
       note: note.trim() || undefined,
       by: edit?.by ?? store.state.me,
       createdAt: edit?.createdAt ?? Date.now(),
@@ -84,7 +89,6 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
       ...(meta.place ? geo : {}),
       ...(poster && !meta.place ? { poster } : {}),
     }
-    setSaved(true)
     setTimeout(() => { store.upsert(item); onDone(item) }, 520)
   }
 
@@ -129,7 +133,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
         )}
         {place && <p className="hint ok">Épinglé sur la carte : {place.address || place.sub}</p>}
         {!place && edit?.lat != null && meta.place && <p className="hint ok">Toujours épinglé sur la carte. Tape un autre lieu pour le déplacer.</p>}
-        {meta.place && !place && edit?.lat == null && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste pour l'épingler sur la carte.</p>}
+        {meta.place && !place && edit?.lat == null && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste, sinon on cherchera l'adresse pour l'épingler.</p>}
         {offline && <p className="hint">Recherche indisponible, tu peux quand même l'ajouter.</p>}
       </div>
       <div className="field">
