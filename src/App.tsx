@@ -63,14 +63,13 @@ export default function App() {
   const draft = useRef<Draft | null>(null)
   const sheetRef = useRef<SheetState>(null)
   sheetRef.current = sheet
-  /** Tirer vers le bas sur l'accueil : nouvelle version de l'app s'il y en a une, et dernières idées de Supabase. */
+  /** Tirer vers le bas sur l'accueil : on récupère la dernière version de l'app, puis on la recharge (les idées se resynchronisent au démarrage). */
   const refresh = useCallback(async () => {
-    store.refresh()
     const reg = await navigator.serviceWorker?.getRegistration().catch(() => undefined)
     await reg?.update().catch(() => {})
-    toast(store.session ? 'À jour' : 'À jour sur ce téléphone')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store.refresh, store.session, toast])
+    await new Promise((r) => setTimeout(r, 500))
+    location.reload()
+  }, [])
   const close = useCallback(() => {
     if (sheetRef.current?.kind === 'add' && draft.current) toast('Brouillon gardé pour plus tard')
     setSheet(null)

@@ -1,6 +1,6 @@
 import { CatIcon, cat } from '../cats'
 import { avg, type Store } from '../store'
-import { directionsUrl, googleDirectionsUrl } from '../search'
+import { directionsUrl, googleDirectionsUrl, wazeUrl } from '../search'
 import { burst, Hearts } from './ui'
 import { PlacePhotos } from './PlacePhotos'
 
@@ -11,6 +11,7 @@ const Ic = ({ d, size = 18 }: { d: string; size?: number }) => (
 const PIN = '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'
 const ARROW = '<path d="M3.5 11.2 20 4l-7.2 16.5-2.1-7.2z"/>'
 const MAP = '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/>'
+const CAR = '<path d="M5 16V12l2-5h10l2 5v4z"/><circle cx="8" cy="16.5" r="1.6"/><circle cx="16" cy="16.5" r="1.6"/><path d="M5 12h14"/>'
 const PEN = '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
 const BIN = '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>'
 
@@ -46,9 +47,11 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
       {item.lat != null && item.lng != null && (
         <section className="block">
           {item.address && <p className="addr"><Ic d={PIN} size={16} />{item.address}</p>}
-          <div className="go-btns">
-            <a className="go-btn" href={directionsUrl(item.lat, item.lng, item.title)} target="_blank" rel="noreferrer"><Ic d={ARROW} />Plans</a>
-            <a className="go-btn" href={googleDirectionsUrl(item.lat, item.lng, item.title, item.address)} target="_blank" rel="noreferrer"><Ic d={MAP} />Google Maps</a>
+          <div className="go-row">
+            <span className="go-label">Y aller avec</span>
+            <a className="go-chip" href={directionsUrl(item.lat, item.lng, item.title)} target="_blank" rel="noreferrer"><Ic d={ARROW} size={15} />Plans</a>
+            <a className="go-chip" href={googleDirectionsUrl(item.lat, item.lng, item.title, item.address)} target="_blank" rel="noreferrer"><Ic d={MAP} size={15} />Google</a>
+            <a className="go-chip" href={wazeUrl(item.lat, item.lng)} target="_blank" rel="noreferrer"><Ic d={CAR} size={15} />Waze</a>
           </div>
         </section>
       )}

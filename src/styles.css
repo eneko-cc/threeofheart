@@ -392,6 +392,12 @@ html.sheet-open .dock { transform: translateY(calc(130% * (1 - var(--sheet-pull,
 .go-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px; border-radius: 18px; text-decoration: none;
   background: var(--surface); color: var(--fg); font-weight: 700; box-shadow: 0 6px 16px -12px rgba(59, 15, 34, 0.45), inset 0 0 0 1.5px var(--line); transition: transform 0.15s; }
 .go-btn svg { color: var(--accent); }
+.go-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.go-row .go-label { grid-column: 1 / -1; font-size: 13px; font-weight: 600; color: var(--muted); padding-left: 2px; }
+.go-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 42px; padding: 0 8px; border-radius: 99px; text-decoration: none;
+  background: var(--surface); color: var(--fg); font-weight: 700; font-size: 14px; box-shadow: inset 0 0 0 1.5px var(--line); transition: transform 0.15s; }
+.go-chip svg { color: var(--accent); }
+.go-chip:active { transform: scale(0.94); }
 .go-btn:active, .soft:active { transform: scale(0.96); }
 .soft { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px; border-radius: 99px; background: var(--surface-2); color: var(--fg); font-weight: 600; transition: transform 0.15s; }
 .soft.danger { color: #C4224F; }
