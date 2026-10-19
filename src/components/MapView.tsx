@@ -9,7 +9,7 @@ import { ItemCard } from './ui'
 import { PlacePhotos } from './PlacePhotos'
 
 // Fond de carte OpenFreeMap (gratuit, sans clé), recoloré aux couleurs de l'app.
-const STYLE = 'https://tiles.openfreemap.org/styles/positron'
+export const STYLE = 'https://tiles.openfreemap.org/styles/positron'
 
 function palette() {
   if (document.documentElement.dataset.design === 'v2')
@@ -20,7 +20,7 @@ function palette() {
 const FR_NAME = ['coalesce', ['get', 'name:fr'], ['get', 'name_int'], ['get', 'name']]
 
 /** Carte apaisée : on garde l'eau, les parcs, les rues en ton sur ton, et on cache rails, frontières et pictos. */
-function recolor(map: maplibregl.Map) {
+export function recolor(map: maplibregl.Map) {
   const p = palette()
   const set = (id: string, prop: string, v: unknown) => { try { map.setPaintProperty(id, prop, v) } catch {} }
   const hide = (id: string) => { try { map.setLayoutProperty(id, 'visibility', 'none') } catch {} }

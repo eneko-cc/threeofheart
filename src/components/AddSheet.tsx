@@ -3,6 +3,7 @@ import { CATS, CatIcon, cat } from '../cats'
 import { newId, type Store } from '../store'
 import { geocode, searchPlaces, searchWorks, type Place, type Work } from '../search'
 import type { CatId, Item } from '../types'
+import { PinPicker } from './PinPicker'
 
 type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
 
@@ -25,6 +26,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
   const [offline, setOffline] = useState(false)
   const [saved, setSaved] = useState(false)
   const [fromDraft, setFromDraft] = useState(!!draft && !edit)
+  const [picking, setPicking] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const meta = cat(c)
 
@@ -95,6 +97,17 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
   const whereLabel = meta.place ? 'Quartier' : c === 'todo' ? 'Quand ?' : 'Où le regarder ?'
   const wherePh = meta.place ? 'Ex. 11e, Canal Saint-Martin' : c === 'todo' ? 'Ex. ce week-end' : 'Ex. Netflix, au cinéma'
 
+  if (picking) {
+    return (
+      <div className="add">
+        <h2 className="sheet-title">Placer sur la carte</h2>
+        <PinPicker label={title.trim()} start={place ?? (edit?.lat != null ? { lat: edit.lat, lng: edit.lng! } : undefined)}
+          onCancel={() => setPicking(false)}
+          onPick={(p) => { setPlace(p); setPicked(true); if (!where.trim() && p.where) setWhere(p.where); setPicking(false) }} />
+      </div>
+    )
+  }
+
   return (
     <div className="add">
       <h2 className="sheet-title">{edit ? 'Modifier' : 'Nouvelle idée'}</h2>
@@ -131,10 +144,15 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
             ))}
           </ul>
         )}
-        {place && <p className="hint ok">Épinglé sur la carte : {place.address || place.sub}</p>}
+        {place && <p className="hint ok">Épinglé sur la carte{place.address || place.sub ? ` : ${place.address || place.sub}` : ''}</p>}
         {!place && edit?.lat != null && meta.place && <p className="hint ok">Toujours épinglé sur la carte. Tape un autre lieu pour le déplacer.</p>}
         {meta.place && !place && edit?.lat == null && title.length > 2 && !sugg.length && !offline && <p className="hint">Choisis un lieu dans la liste, sinon on cherchera l'adresse pour l'épingler.</p>}
         {offline && <p className="hint">Recherche indisponible, tu peux quand même l'ajouter.</p>}
+        {meta.place && title.trim().length > 1 && (
+          <button className="link-btn" onClick={() => { setSugg([]); setPicking(true) }}>
+            {place || edit?.lat != null ? "Ajuster l'emplacement sur la carte" : 'Pas dans la liste ? Le placer sur la carte'}
+          </button>
+        )}
       </div>
       <div className="field">
         <label htmlFor="f-where">{whereLabel}</label>

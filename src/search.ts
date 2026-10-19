@@ -39,25 +39,42 @@ export async function geocode(q: string, ms = 4000): Promise<Place | undefined> 
   }
 }
 
+function toPlace(f: any, q = ''): Place {
+  const p = f.properties ?? {}
+  const street = [p.housenumber, p.street].filter(Boolean).join(' ')
+  const address = [street || (p.name !== p.street ? undefined : p.name), p.postcode, p.city].filter(Boolean).join(', ')
+  const where = arrondissement(p.postcode) ?? p.district ?? p.city ?? ''
+  return {
+    label: p.name ?? street ?? q,
+    sub: [street, p.district ?? arrondissement(p.postcode), p.city].filter(Boolean).join(' · '),
+    where,
+    address,
+    lat: f.geometry.coordinates[1],
+    lng: f.geometry.coordinates[0],
+  }
+}
+
 export async function searchPlaces(q: string, signal?: AbortSignal): Promise<Place[]> {
   const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${PARIS.lat}&lon=${PARIS.lng}&limit=6&lang=fr`
   const res = await fetch(url, { signal })
   if (!res.ok) throw new Error('photon')
   const data = await res.json()
-  return (data.features ?? []).map((f: any) => {
-    const p = f.properties ?? {}
-    const street = [p.housenumber, p.street].filter(Boolean).join(' ')
-    const address = [street || (p.name !== p.street ? undefined : p.name), p.postcode, p.city].filter(Boolean).join(', ')
-    const where = arrondissement(p.postcode) ?? p.district ?? p.city ?? ''
-    return {
-      label: p.name ?? street ?? q,
-      sub: [street, p.district ?? arrondissement(p.postcode), p.city].filter(Boolean).join(' · '),
-      where,
-      address,
-      lat: f.geometry.coordinates[1],
-      lng: f.geometry.coordinates[0],
-    }
-  })
+  return (data.features ?? []).map((f: any) => toPlace(f, q))
+}
+
+/** Adresse la plus proche d'un point posé à la main sur la carte. */
+export async function reverse(lat: number, lng: number): Promise<Place | undefined> {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), 4000)
+  try {
+    const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=fr`, { signal: ctrl.signal })
+    const f = (await res.json()).features?.[0]
+    return f ? { ...toPlace(f), lat, lng } : undefined
+  } catch {
+    return undefined
+  } finally {
+    clearTimeout(t)
+  }
 }
 
 export interface Work {

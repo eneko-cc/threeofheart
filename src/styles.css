@@ -442,6 +442,15 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
 .yn-res.yes { color: var(--w-yes-ink2, var(--fg)); } .yn-res.no { color: var(--w-no-ink2, var(--fg)); }
 .yn-q { text-align: center; color: var(--muted); font-weight: 600; margin: -4px 0 4px; }
 
+/* placer un lieu à la main */
+.link-btn { align-self: flex-start; padding: 8px 2px; color: var(--fg); font-weight: 600; font-size: 14px; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.picker { display: flex; flex-direction: column; gap: 12px; }
+.picker .field { margin: 0; }
+.picker-map { position: relative; height: min(46vh, 380px); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+.picker-map .map { position: absolute; inset: 0; }
+.picker-pin { position: absolute; left: 50%; top: 50%; width: 38px; height: 46px; transform: translate(-50%, -100%); pointer-events: none; filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.3)); }
+.picker .hint { text-align: center; }
+
 /* tirer pour rafraîchir */
 .ptr { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 6px); z-index: 4; width: 40px; height: 40px; margin-left: -20px; border-radius: 50%;
   display: grid; place-items: center; background: var(--surface); color: var(--accent); box-shadow: var(--shadow); pointer-events: none;
