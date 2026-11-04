@@ -8,10 +8,11 @@ import { AddSheet, type Draft } from './components/AddSheet'
 import { Detail } from './components/Detail'
 import { Us } from './components/Us'
 import { YesNo } from './components/YesNo'
+import { Courses } from './components/Courses'
 import { burst, ScrollView, Sheet, Splash } from './components/ui'
 
 type Tab = 'home' | 'list' | 'map' | 'us'
-type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'edit'; id: string } | { kind: 'detail'; id: string } | { kind: 'yesno'; q?: string } | null
+type SheetState = { kind: 'add'; cat?: CatId } | { kind: 'edit'; id: string } | { kind: 'detail'; id: string } | { kind: 'yesno'; q?: string } | { kind: 'courses' } | null
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'home', label: 'Accueil', icon: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>' },
@@ -87,6 +88,7 @@ export default function App() {
       <main>
         <ScrollView hidden={tab !== 'home'} title="Threeofheart" dx={dx} onRefresh={refresh}>
           <Home store={store} onOpen={open} onCheck={check} onYesNo={() => setSheet({ kind: 'yesno' })}
+            onCourses={() => setSheet({ kind: 'courses' })}
             onCat={(c) => { setFilter(c); go('list') }} />
         </ScrollView>
         <ScrollView hidden={tab !== 'list'} title="Notre liste" dx={dx}>
@@ -124,6 +126,7 @@ export default function App() {
         {sheet?.kind === 'detail' && <Detail key={sheet.id} store={store} id={sheet.id} onClose={close} toast={toast}
           onYesNo={(q) => setSheet({ kind: 'yesno', q })} onEdit={() => setSheet({ kind: 'edit', id: sheet.id })} />}
         {sheet?.kind === 'yesno' && <YesNo question={sheet.q} />}
+        {sheet?.kind === 'courses' && <Courses store={store} toast={toast} />}
       </Sheet>
       <div className={'toast' + (msg ? ' on' : '') + (canUndo ? ' undo' : '')} role="status">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 21C5 16 2 12.5 2 8.5A5 5 0 0 1 12 6a5 5 0 0 1 10 2.5c0 4-3 7.5-10 12.5z" /></svg>

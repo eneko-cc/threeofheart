@@ -34,6 +34,9 @@ export const avg = (i: Item) => {
   return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0
 }
 
+/** Une envie, par opposition à un article de la liste de courses */
+export const isIdea = (i: Item) => i.cat !== 'courses'
+
 export const newId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
 
 export type SyncStatus = 'off' | 'syncing' | 'ok' | 'offline'

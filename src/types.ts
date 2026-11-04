@@ -1,4 +1,4 @@
-export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo'
+export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo' | 'courses'
 export type Who = 'a' | 'b'
 
 export interface Item {

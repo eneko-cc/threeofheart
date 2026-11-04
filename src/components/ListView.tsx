@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CATS } from '../cats'
-import { avg, type Store } from '../store'
+import { avg, isIdea, type Store } from '../store'
 import type { CatId } from '../types'
 import { ItemCard } from './ui'
 
@@ -30,6 +30,7 @@ export function ListView({ store, filter, setFilter, onOpen, onCheck, onDraw }: 
   const [tab, setTab] = useState<'todo' | 'done'>('todo')
   const [q, setQ] = useState('')
   const items = state.items
+    .filter(isIdea)
     .filter((i) => !!i.done === (tab === 'done'))
     .filter((i) => filter === 'all' || i.cat === filter)
     .filter((i) => !q || (i.title + ' ' + (i.where ?? '')).toLowerCase().includes(q.toLowerCase()))

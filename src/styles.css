@@ -678,3 +678,72 @@ button.row:active { background: var(--surface-2); }
 :root[data-design='v1'] .row-txt b.danger { color: #FFB4A0; }
 :root[data-design='v1'] .group-card { box-shadow: 0 10px 24px -16px rgba(0, 10, 60, 0.7); }
 :root[data-design='v1'] .us-names { color: #FFFFFF; }
+
+/* ---------- Courses ---------- */
+.shop-card { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border-radius: 24px; text-align: left;
+  background: var(--hero); color: var(--hero-ink); box-shadow: var(--shadow); animation: pop 0.5s both; transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.shop-card:active { transform: scale(0.97); }
+.shop-ic { flex: none; width: 46px; height: 46px; border-radius: 16px; display: grid; place-items: center; background: var(--fab); color: var(--fab-ink); }
+.shop-card:active .shop-ic svg { animation: cart-roll 0.5s ease; }
+@keyframes cart-roll { 40% { transform: translateX(6px) rotate(-8deg); } 70% { transform: translateX(-2px); } }
+.shop-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.shop-txt b { font-size: 18px; font-weight: 700; }
+.shop-txt span { font-size: 14px; opacity: 0.78; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shop-n { flex: none; min-width: 34px; height: 34px; padding: 0 10px; border-radius: 99px; display: grid; place-items: center;
+  background: var(--hero-ink); color: var(--hero); font-weight: 800; font-size: 16px; animation: hpop 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+
+.courses { display: flex; flex-direction: column; gap: 14px; padding-bottom: 8px; }
+.courses-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.courses-head .sheet-title { margin: 0; }
+.courses-count { color: var(--muted); font-weight: 600; font-size: 15px; animation: fade 0.3s both; }
+.courses-add { position: sticky; top: -10px; z-index: 2; display: flex; gap: 8px; padding: 6px 0; background: var(--bg); }
+.courses-add input { flex: 1; min-width: 0; border: 2px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 18px; padding: 14px 16px; font-size: 17px; }
+.courses-add input:focus { outline: none; border-color: var(--accent); }
+.courses-plus { flex: none; width: 54px; border-radius: 18px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted);
+  transition: background 0.2s, color 0.2s, transform 0.3s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.courses-plus.on { background: var(--btn); color: var(--btn-ink); transform: rotate(90deg); }
+.courses-plus:active { transform: scale(0.88) rotate(180deg); }
+.courses-chips { display: flex; gap: 8px; overflow-x: auto; margin: -4px -18px 0; padding: 2px 18px 4px; scrollbar-width: none; }
+.courses-chips::-webkit-scrollbar { display: none; }
+.courses-chip { flex: none; padding: 9px 14px; border-radius: 99px; background: var(--surface); color: var(--fg); border: 1.5px dashed var(--line);
+  font-size: 14px; font-weight: 600; transition: transform 0.15s; }
+.courses-chip:active { transform: scale(0.92); }
+.courses-chip.gone { animation: chip-fly 0.35s ease forwards; }
+@keyframes chip-fly { to { opacity: 0; transform: translateY(26px) scale(0.6); } }
+.courses-empty { text-align: center; padding: 26px 10px 10px; color: var(--muted); }
+.courses-empty span { display: block; font-size: 52px; animation: float 4s ease-in-out infinite; }
+.courses-empty p { margin: 10px auto 0; max-width: 260px; font-weight: 500; }
+.courses-done { text-align: center; margin: 4px 0; font-weight: 700; font-size: 17px; animation: pop 0.5s both; }
+
+.aisle h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.aisle h3 span { font-size: 17px; }
+.aisle ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.cart-head { display: flex; align-items: center; justify-content: space-between; }
+.cart-head h3 { margin: 0 0 8px; }
+.cart-empty { margin-bottom: 8px; padding: 7px 14px; border-radius: 99px; background: var(--surface-2); color: var(--fg); font-size: 14px; font-weight: 700; }
+.courses-tip { text-align: center; }
+
+.buy { position: relative; border-radius: 18px; overflow: hidden; animation: pop 0.35s both;
+  transition: max-height 0.3s ease 0.15s, opacity 0.25s, margin 0.3s ease 0.15s; max-height: 80px; }
+.buy.gone { max-height: 0; opacity: 0; margin-top: -6px; }
+.buy.fresh .row-body { animation: buy-flash 0.9s ease; }
+@keyframes buy-flash { 0% { transform: scale(0.94); box-shadow: 0 0 0 3px var(--accent); } 40% { transform: scale(1.02); } 100% { transform: none; box-shadow: 0 0 0 0 transparent; } }
+.row-bin { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; border-radius: 18px;
+  background: #E5484D; color: #fff; font-weight: 700; font-size: 15px; opacity: 0; transition: opacity 0.15s; }
+.buy.swipe .row-bin, .buy.gone .row-bin { opacity: 0.6; }
+.buy.arm .row-bin { opacity: 1; }
+.row-body { position: relative; width: 100%; display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 10px 14px;
+  background: var(--surface); color: var(--fg); border-radius: 18px; text-align: left; transition: transform 0.28s cubic-bezier(0.3, 1.3, 0.5, 1); }
+.box { flex: none; width: 26px; height: 26px; border-radius: 9px; border: 2.5px solid var(--line); display: grid; place-items: center; color: transparent;
+  transition: background 0.2s, border-color 0.2s, color 0.2s; }
+.box svg path { stroke-dasharray: 22; stroke-dashoffset: 22; }
+.buy.checked .box { background: var(--done); border-color: var(--done); color: var(--done-ink); animation: hpop 0.35s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.buy.checked .box svg path { animation: draw 0.3s ease 0.08s forwards; }
+.qty { flex: none; min-width: 26px; padding: 2px 8px; border-radius: 99px; background: var(--surface-2); font-weight: 800; font-size: 14px; text-align: center; }
+.name { flex: 1; min-width: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 55% / 0 2px; transition: background-size 0.35s ease, opacity 0.3s; }
+.buy.checked .name { background-size: 100% 2px; opacity: 0.5; }
+.who { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  background: var(--surface-2); color: var(--muted); }
+.cart .row-body { background: var(--bg); box-shadow: inset 0 0 0 1.5px var(--line); }
+@media (prefers-reduced-motion: reduce) { .buy, .buy .box, .shop-card, .courses-empty span { animation: none !important; } }

@@ -29,7 +29,11 @@ export const CATS: Cat[] = [
     icon: '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>' },
 ]
 
-export const cat = (id: CatId) => CATS.find((c) => c.id === id)!
+/** La liste de courses vit à part : elle n'apparaît ni dans les envies, ni sur la carte. */
+export const COURSES: Cat = { id: 'courses', label: 'Courses', plural: 'Courses', bg: 'var(--hero)', ink: 'var(--hero-ink)', pin: 'var(--accent)', place: false,
+  icon: '<path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L21 8H6.3"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>' }
+
+export const cat = (id: CatId) => CATS.find((c) => c.id === id) ?? COURSES
 
 export function CatIcon({ id, size = 22 }: { id: CatId; size?: number }) {
   return (

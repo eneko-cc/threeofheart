@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { cat, Heart } from '../cats'
-import { avg, type Store } from '../store'
+import { avg, isIdea, type Store } from '../store'
 import type { AppState } from '../types'
 import { CountUp } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
@@ -85,7 +85,8 @@ export function Us({ store, toast }: { store: Store; toast: Toast }) {
   const [sure, setSure] = useState(false)
   const [design, setD] = useState<Design>(getDesign)
   const pick = (d: Design) => { setD(d); setDesign(d) }
-  const done = state.items.filter((i) => i.done)
+  const ideas = state.items.filter(isIdea)
+  const done = ideas.filter((i) => i.done)
   const rated = done.map(avg).filter(Boolean)
   const best = [...done].sort((x, y) => avg(y) - avg(x))[0]
   const hasExamples = state.items.some((i) => i.example)
@@ -102,7 +103,7 @@ export function Us({ store, toast }: { store: Store; toast: Toast }) {
       </header>
 
       <div className="stats">
-        <div className="stat" style={{ background: 'var(--c-pink)' }}><b><CountUp value={state.items.length - done.length} /></b><span>à faire</span></div>
+        <div className="stat" style={{ background: 'var(--c-pink)' }}><b><CountUp value={ideas.length - done.length} /></b><span>à faire</span></div>
         <div className="stat" style={{ background: 'var(--c-blue)' }}><b><CountUp value={done.length} /></b><span>faits</span></div>
         <div className="stat" style={{ background: 'var(--c-mint)' }}><b>{rated.length ? <CountUp value={rated.reduce((a, b) => a + b, 0) / rated.length} decimals={1} /> : '–'}</b><span>cœurs en moy.</span></div>
       </div>
