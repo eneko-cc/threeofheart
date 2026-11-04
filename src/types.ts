@@ -24,6 +24,10 @@ export interface Item {
   url?: string
   ingredients?: string[]
   steps?: string[]
+  /** Recettes : description courte, portions et temps */
+  intro?: string
+  serves?: string
+  time?: string
 
 }
 

@@ -1,6 +1,6 @@
 import { sb } from './sync'
 
-export interface Recipe { title?: string; image?: string; ingredients: string[]; steps: string[]; text?: string; source?: string }
+export interface Recipe { title?: string; image?: string; ingredients: string[]; steps: string[]; text?: string; source?: string; intro?: string; serves?: string; time?: string }
 
 /** D'où vient le lien, pour le bouton « Voir sur … » */
 export function sourceName(url?: string) {
@@ -35,7 +35,8 @@ export async function importRecipe(url: string): Promise<Recipe> {
     if (!ingredients.length) ingredients = p.ingredients
     if (!steps.length) steps = p.steps
   }
-  return { title: r.title?.trim() || undefined, image: r.image || undefined, ingredients, steps, text: r.text, source: r.source || url }
+  return { title: r.title?.trim() || undefined, image: r.image || undefined, ingredients, steps, text: r.text, source: r.source || url,
+    intro: r.intro || undefined, serves: r.serves || undefined, time: r.time || undefined }
 }
 
 const clean = (xs: string[]) => xs.map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean)

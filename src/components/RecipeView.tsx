@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { newId, type Store } from '../store'
 import type { Item } from '../types'
-import { parseRecipeText, productKey, sourceName, toShopping } from '../recipe'
+import { importRecipe, parseRecipeText, productKey, sourceName, toShopping } from '../recipe'
 import { burst } from './ui'
 
 const CART = '<path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L21 8H6.3"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>'
@@ -21,6 +21,25 @@ export function RecipeView({ item, store, toast }: { item: Item; store: Store; t
   const [done, setDone] = useState<Set<number>>(new Set())
   const [cooking, setCooking] = useState(false)
   const lock = useRef<{ release: () => Promise<void> } | null>(null)
+  const [finding, setFinding] = useState(false)
+
+  /** Relit le lien pour compléter une recette arrivée incomplète (par exemple depuis le Raccourci). */
+  const find = async () => {
+    if (!item.url) return
+    setFinding(true)
+    try {
+      const r = await importRecipe(item.url)
+      if (!r.ingredients.length) { toast('Recette introuvable, colle la description avec Modifier'); return }
+      patch(item.id, {
+        title: !item.title || item.title === 'Recette à compléter' ? r.title || item.title : item.title,
+        poster: item.poster || r.image,
+        intro: r.intro ?? item.intro, serves: r.serves ?? item.serves, time: r.time ?? item.time,
+        ingredients: r.ingredients, steps: r.steps.length ? r.steps : item.steps,
+      })
+      toast('Recette retrouvée !')
+    } catch { toast('Lecture impossible pour le moment, réessaie plus tard') }
+    finally { setFinding(false) }
+  }
 
   const addOne = (ing: string): Item => {
     const it: Item = { id: newId(), title: toShopping(ing), cat: 'courses', by: state.me, createdAt: Date.now(), note: item.title }
@@ -54,6 +73,24 @@ export function RecipeView({ item, store, toast }: { item: Item; store: Store; t
         <a className="src-link" href={item.url} target="_blank" rel="noreferrer">
           <Ic d='<path d="M8 5.5v13l10-6.5z"/>' size={16} />Voir sur {sourceName(item.url)}
         </a>
+      )}
+
+      {(item.intro || item.serves || item.time) && (
+        <section className="block recipe-intro">
+          {item.intro && <p>{item.intro}</p>}
+          {(item.serves || item.time) && (
+            <div className="meta">
+              {item.serves && <span className="pill">🍽️ {item.serves}</span>}
+              {item.time && <span className="pill">⏱️ {item.time}</span>}
+            </div>
+          )}
+        </section>
+      )}
+
+      {!ings.length && !!item.url && (
+        <button className="primary find-btn" onClick={find} disabled={finding}>
+          {finding ? <><span className="spin" aria-hidden="true" />Je retrouve la recette…</> : 'Retrouver la recette depuis le lien'}
+        </button>
       )}
 
       {!ings.length && !!item.note && (

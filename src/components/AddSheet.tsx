@@ -34,6 +34,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
   const [steps, setSteps] = useState(edit?.steps?.join('\n') ?? draft?.steps ?? '')
   const [reading, setReading] = useState<'idle' | 'busy' | 'ok' | 'partial' | 'fail'>('idle')
   const [pasting, setPasting] = useState(false)
+  const [extra, setExtra] = useState<{ intro?: string; serves?: string; time?: string }>({ intro: edit?.intro, serves: edit?.serves, time: edit?.time })
   const lastUrl = useRef(edit?.url ?? draft?.url ?? '')
   const isRecipe = c === 'recette'
   const input = useRef<HTMLInputElement>(null)
@@ -56,6 +57,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
       if (r.image) setPoster((p) => p || r.image)
       if (r.ingredients.length) setIngs((x) => x.trim() || r.ingredients.join('\n'))
       if (r.steps.length) setSteps((x) => x.trim() || r.steps.join('\n'))
+      setExtra((e) => ({ intro: e.intro || r.intro, serves: e.serves || r.serves, time: e.time || r.time }))
       setReading(r.ingredients.length ? 'ok' : 'partial')
       if (!r.ingredients.length) setPasting(true)
     } catch {
@@ -132,11 +134,12 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
       lat: undefined, lng: undefined, address: undefined, poster: undefined,
       ...(meta.place ? geo : {}),
       ...(poster && !meta.place ? { poster } : {}),
-      url: undefined, ingredients: undefined, steps: undefined,
+      url: undefined, ingredients: undefined, steps: undefined, intro: undefined, serves: undefined, time: undefined,
       ...(isRecipe ? {
         url: url.trim() || undefined,
         ingredients: lines(ings),
         steps: lines(steps),
+        ...extra,
       } : {}),
     }
     setTimeout(() => { store.upsert(item); onDone(item) }, 520)

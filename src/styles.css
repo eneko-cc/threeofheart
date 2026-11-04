@@ -798,3 +798,8 @@ textarea.lines { min-height: 120px; line-height: 1.6; }
 .cooking .step-t { font-size: 19px; }
 .cooking .step.now { box-shadow: 0 0 0 3px var(--accent); transform: scale(1.01); }
 .cooking .step.now .step-n { background: var(--accent); color: var(--fir-ink); }
+.recipe-intro { background: var(--surface); border-radius: 20px; padding: 14px 16px; gap: 10px; }
+.recipe-intro p { margin: 0; line-height: 1.55; }
+.recipe-intro .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.find-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.find-btn .spin { border-color: currentColor; border-top-color: transparent; }
