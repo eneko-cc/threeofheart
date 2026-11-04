@@ -2,37 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { newId, type Store } from '../store'
 import type { Item } from '../types'
 import { burst } from './ui'
+import { AISLES, OTHER, aisleOf, norm } from '../aisles'
 
-/** Rayons, dans l'ordre d'un passage en magasin. Les mots sont comparés au début de chaque mot saisi, sans accents. */
-const AISLES: { id: string; label: string; emoji: string; words: string[] }[] = [
-  { id: 'fl', label: 'Fruits et légumes', emoji: '🥦', words: ['fruit', 'legume', 'pomme', 'banane', 'poire', 'orange', 'citron', 'clementine', 'kiwi', 'fraise', 'framboise', 'raisin', 'mangue', 'ananas', 'avocat', 'tomate', 'salade', 'laitue', 'carotte', 'oignon', 'echalote', 'ail', 'courgette', 'poivron', 'champignon', 'patate', 'concombre', 'epinard', 'brocoli', 'chou', 'aubergine', 'poireau', 'basilic', 'persil', 'coriandre', 'menthe', 'radis', 'betterave', 'courge', 'potiron'] },
-  { id: 'pain', label: 'Boulangerie', emoji: '🥖', words: ['pain', 'baguette', 'croissant', 'brioche', 'viennoiserie', 'pita', 'wrap', 'tortilla'] },
-  { id: 'frais', label: 'Frais', emoji: '🧀', words: ['lait', 'yaourt', 'yogourt', 'skyr', 'fromage', 'beurre', 'creme', 'oeuf', 'œuf', 'jambon', 'emmental', 'mozza', 'parmesan', 'comte', 'feta', 'chevre', 'burrata', 'ricotta', 'houmous', 'tofu', 'pate feuillete', 'pate brisee'] },
-  { id: 'viande', label: 'Viande et poisson', emoji: '🥩', words: ['poulet', 'boeuf', 'bœuf', 'steak', 'viande', 'hache', 'porc', 'agneau', 'dinde', 'lardon', 'saucisse', 'chorizo', 'poisson', 'saumon', 'thon', 'cabillaud', 'crevette', 'moule'] },
-  { id: 'epicerie', label: 'Épicerie', emoji: '🍝', words: ['pate', 'pates', 'spaghetti', 'riz', 'farine', 'sucre', 'sel', 'poivre', 'huile', 'vinaigre', 'cafe', 'the', 'tisane', 'cereale', 'muesli', 'chocolat', 'biscuit', 'gateau', 'conserve', 'sauce', 'pesto', 'epice', 'miel', 'confiture', 'chips', 'lentille', 'pois chiche', 'haricot', 'moutarde', 'mayo', 'ketchup', 'bouillon', 'levure', 'noix', 'amande', 'quinoa', 'semoule', 'olive'] },
-  { id: 'boissons', label: 'Boissons', emoji: '🧃', words: ['eau', 'jus', 'vin', 'biere', 'soda', 'coca', 'sirop', 'champagne', 'limonade', 'kombucha', 'lait d avoine'] },
-  { id: 'surgeles', label: 'Surgelés', emoji: '🧊', words: ['surgele', 'glace', 'glacon', 'pizza', 'frite'] },
-  { id: 'maison', label: 'Maison et hygiène', emoji: '🧴', words: ['papier', 'pq', 'sopalin', 'essuie', 'lessive', 'adoucissant', 'vaisselle', 'eponge', 'savon', 'shampoing', 'shampooing', 'apres shampoing', 'gel douche', 'dentifrice', 'brosse', 'coton', 'sac poubelle', 'poubelle', 'deodorant', 'mouchoir', 'produit', 'javel', 'ampoule', 'pile', 'rasoir', 'creme solaire', 'serviette'] },
-]
-const OTHER = { id: 'autre', label: 'Autre', emoji: '🛍️' }
 const DEFAULTS = ['Lait', 'Pain', 'Œufs', 'Pâtes', 'Bananes', 'Café', 'Papier toilette', 'Lessive']
-
-const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9œ ]+/g, ' ').replace(/\s+/g, ' ').trim()
-
-/** Rayon d'un article ; la quantité en tête (« 2 avocats ») est ignorée. Les expressions de plusieurs mots passent avant les mots seuls. */
-function aisleOf(title: string) {
-  const t = norm(title).replace(/^\d+\s*(x\s*)?/, '')
-  const words = t.split(' ')
-  let best: { id: string; len: number } | null = null
-  for (const a of AISLES) {
-    for (const w of a.words) {
-      const nw = norm(w)
-      const hit = nw.includes(' ') ? (' ' + t + ' ').includes(' ' + nw) : words.some((x) => x.startsWith(nw) && x.length <= nw.length + 2)
-      if (hit && (!best || nw.length > best.len)) best = { id: a.id, len: nw.length }
-    }
-  }
-  return best?.id ?? OTHER.id
-}
 
 /** « 2 avocats » → quantité 2, nom « avocats » */
 function split(title: string) {
