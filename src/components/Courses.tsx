@@ -219,7 +219,7 @@ function Row({ item, who, done, fresh, ticking, onTick, onDrop }: {
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
         </span>
         {qty && <span className="qty">{qty}</span>}
-        <span className="name">{name}</span>
+        <span className="name-wrap"><span className="name">{name}</span>{item.note && <small className="for">pour {item.note}</small>}</span>
         <span className="who" title={`Ajouté par ${who}`}>{who.slice(0, 1)}</span>
       </button>
     </li>

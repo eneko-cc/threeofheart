@@ -25,6 +25,8 @@ export const CATS: Cat[] = [
     icon: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 8l3-4h4l-3 4M10 8l3-4h4l-3 4"/>' },
   { id: 'serie', label: 'Série', plural: 'Séries', bg: 'var(--bg-serie)', ink: 'var(--ink-serie)', pin: 'var(--pin-serie)', place: false,
     icon: '<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 21h8M9 2l3 4 3-4"/>' },
+  { id: 'recette', label: 'Recette', plural: 'Recettes', bg: 'var(--bg-recette)', ink: 'var(--ink-recette)', pin: 'var(--pin-recette)', place: false,
+    icon: '<path d="M6 13.5a4 4 0 0 1 1.2-7.8 5 5 0 0 1 9.6 0A4 4 0 0 1 18 13.5V19a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1z"/><path d="M6 16h12"/>' },
   { id: 'todo', label: 'À faire', plural: 'À faire', bg: 'var(--bg-todo)', ink: 'var(--ink-todo)', pin: 'var(--pin-todo)', place: false,
     icon: '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>' },
 ]

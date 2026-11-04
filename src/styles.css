@@ -33,10 +33,10 @@
   --heart: #E58AA5; --done: #1F4D3A; --done-ink: #FFFFFF;
   --toast: #16302A; --toast-ink: #FFFFFF; --toast-heart: #F4B6C8;
   --w-yes: #6DB58A; --w-yes2: #CDE8D6; --w-yes-ink: #16302A; --w-no: #E58AA5; --w-no2: #F8C9D6; --w-no-ink: #16302A; --w-yes-ink2: #3E8A60; --w-no-ink2: #C9617F;
-  --pin-resto: #E58AA5; --pin-activite: #6DB58A; --pin-event: #E2B23C; --pin-film: #6FA3CF; --pin-serie: #9C8CD6; --pin-todo: #1F4D3A; --pin-done: #1F4D3A;
+  --pin-resto: #E58AA5; --pin-activite: #6DB58A; --pin-event: #E2B23C; --pin-film: #6FA3CF; --pin-serie: #9C8CD6; --pin-todo: #1F4D3A; --pin-recette: #E58AA5; --pin-done: #1F4D3A;
   --s1: #B9D6EF; --s2: #F4B6C8; --s3: #1F4D3A;
-  --bg-resto: var(--c-pink); --bg-activite: var(--c-mint); --bg-event: var(--c-butter); --bg-film: var(--c-blue); --bg-serie: var(--c-lilac); --bg-todo: var(--c-sand);
-  --ink-resto: var(--card-ink); --ink-activite: var(--card-ink); --ink-event: var(--card-ink); --ink-film: var(--card-ink); --ink-serie: var(--card-ink); --ink-todo: var(--card-ink);
+  --bg-resto: var(--c-pink); --bg-activite: var(--c-mint); --bg-event: var(--c-butter); --bg-film: var(--c-blue); --bg-serie: var(--c-lilac); --bg-todo: var(--c-sand); --bg-recette: var(--c-pink);
+  --ink-resto: var(--card-ink); --ink-activite: var(--card-ink); --ink-event: var(--card-ink); --ink-film: var(--card-ink); --ink-serie: var(--card-ink); --ink-todo: var(--card-ink); --ink-recette: var(--card-ink);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -546,7 +546,8 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --bg-film: #FF9B3D;     --ink-film: #4A1E00;
   --bg-serie: #FEB3A9;    --ink-serie: #5A0F2A;
   --bg-todo: #BAC664;     --ink-todo: #2F3510;
-  --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-done: #3B0F22;
+  --bg-recette: #8C1D40;  --ink-recette: #FFF6F1;
+  --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-recette: #8C1D40; --pin-done: #3B0F22;
 }
 :root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: clamp(42px, 12.6vw, 56px); letter-spacing: -0.01em; color: #DE3566; }
 :root[data-design] .big { font-weight: 800; }
@@ -601,7 +602,8 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --bg-film: #EEEEEE;     --ink-film: #0038BD;
   --bg-serie: #8FB4FF;    --ink-serie: #001A63;
   --bg-todo: #2FBF71;     --ink-todo: #002A12;
-  --pin-resto: #EF8E01; --pin-activite: #C8F135; --pin-event: #FFD43B; --pin-film: #EEEEEE; --pin-serie: #8FB4FF; --pin-todo: #2FBF71; --pin-done: #001A63; --pin-done-ink: #C8F135;
+  --bg-recette: #FF5A5F;  --ink-recette: #2A0005;
+  --pin-resto: #EF8E01; --pin-activite: #C8F135; --pin-event: #FFD43B; --pin-film: #EEEEEE; --pin-serie: #8FB4FF; --pin-todo: #2FBF71; --pin-recette: #FF5A5F; --pin-done: #001A63; --pin-done-ink: #C8F135;
 }
 :root[data-design='v1'] .brand-title { font-weight: 900; letter-spacing: -0.045em; color: #C8F135; }
 :root[data-design='v1'] .section-head h2, :root[data-design='v1'] h1.big:not(.brand-title) { color: #FFFFFF; }
@@ -747,3 +749,52 @@ button.row:active { background: var(--surface-2); }
   background: var(--surface-2); color: var(--muted); }
 .cart .row-body { background: var(--bg); box-shadow: inset 0 0 0 1.5px var(--line); }
 @media (prefers-reduced-motion: reduce) { .buy, .buy .box, .shop-card, .courses-empty span { animation: none !important; } }
+.name-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+.name-wrap .name { flex: none; max-width: 100%; }
+.for { font-size: 12.5px; color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+/* ---------- Recettes ---------- */
+.detail .poster.wide { width: 100%; max-height: 260px; object-fit: cover; border-radius: 22px; }
+.url-row { display: flex; gap: 8px; }
+.url-row input { flex: 1; min-width: 0; }
+.paste-btn { flex: none; padding: 0 18px; border-radius: 16px; background: var(--fab); color: var(--fab-ink); font-weight: 700; font-size: 15px; transition: transform 0.15s; }
+.paste-btn:active { transform: scale(0.92); }
+.hint.reading { display: flex; align-items: center; gap: 8px; }
+.spin { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--line); border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.recipe-thumb { width: 100%; max-height: 160px; object-fit: cover; border-radius: 16px; animation: pop 0.4s both; }
+.paste-box { min-height: 110px; }
+textarea.lines { min-height: 120px; line-height: 1.6; }
+.field label small { font-weight: 500; color: var(--muted); }
+
+.src-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px;
+  background: var(--fg); color: var(--bg); font-weight: 700; font-size: 15px; text-decoration: none; transition: transform 0.15s; }
+.src-link:active { transform: scale(0.94); }
+.block-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.block-head h3 { margin: 0; font-size: 19px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.block-head h3 span { font-size: 13px; padding: 2px 9px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+.add-all { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 99px; background: var(--fab); color: var(--fab-ink);
+  font-weight: 700; font-size: 14px; transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.add-all:active { transform: scale(0.9); }
+.all-on { font-size: 14px; font-weight: 700; color: var(--done); animation: fade 0.3s both; }
+.ings ul, .steps ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ing { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 8px 8px 8px 16px; border-radius: 16px;
+  background: var(--surface); color: var(--fg); text-align: left; transition: background 0.2s, transform 0.15s; }
+.ing:active { transform: scale(0.98); }
+.ing-name { flex: 1; min-width: 0; font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+.ing-cart { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--muted);
+  transition: background 0.2s, color 0.2s; }
+.ing.on .ing-cart { background: var(--done); color: var(--done-ink); animation: hpop 0.35s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.ing.on .ing-name { font-weight: 600; }
+.cook-btn { padding: 9px 14px; border-radius: 99px; background: var(--surface-2); color: var(--fg); font-weight: 700; font-size: 14px; transition: background 0.2s, color 0.2s; }
+.cook-btn.on { background: var(--accent); color: var(--fir-ink); }
+.step { width: 100%; display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface); color: var(--fg);
+  text-align: left; transition: opacity 0.3s, transform 0.2s, box-shadow 0.3s; }
+.step-n { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-weight: 800; font-size: 14px;
+  transition: background 0.2s, color 0.2s; }
+.step-t { flex: 1; line-height: 1.5; font-size: 16px; }
+.step.done { opacity: 0.45; }
+.step.done .step-n { background: var(--done); color: var(--done-ink); animation: hpop 0.35s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.cooking .step-t { font-size: 19px; }
+.cooking .step.now { box-shadow: 0 0 0 3px var(--accent); transform: scale(1.01); }
+.cooking .step.now .step-n { background: var(--accent); color: var(--fir-ink); }

@@ -4,11 +4,12 @@ import { newId, type Store } from '../store'
 import { geocode, searchPlaces, searchWorks, type Place, type Work } from '../search'
 import type { CatId, Item } from '../types'
 import { PinPicker } from './PinPicker'
+import { findUrl, importRecipe, parseRecipeText, sourceName } from '../recipe'
 
 type Suggestion = { kind: 'place'; p: Place } | { kind: 'work'; w: Work }
 
 /** Saisie en cours, gardée quand on referme la feuille sans ajouter. */
-export interface Draft { c: CatId; title: string; where: string; note: string; place: Place | null; poster?: string }
+export interface Draft { c: CatId; title: string; where: string; note: string; place: Place | null; poster?: string; url?: string; ings?: string; steps?: string }
 
 /** Ajout d'une idée, ou modification quand `edit` est fourni. */
 export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
@@ -27,18 +28,59 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
   const [saved, setSaved] = useState(false)
   const [fromDraft, setFromDraft] = useState(!!draft && !edit)
   const [picking, setPicking] = useState(false)
+  // recettes
+  const [url, setUrl] = useState(edit?.url ?? draft?.url ?? '')
+  const [ings, setIngs] = useState(edit?.ingredients?.join('\n') ?? draft?.ings ?? '')
+  const [steps, setSteps] = useState(edit?.steps?.join('\n') ?? draft?.steps ?? '')
+  const [reading, setReading] = useState<'idle' | 'busy' | 'ok' | 'partial' | 'fail'>('idle')
+  const [pasting, setPasting] = useState(false)
+  const lastUrl = useRef(edit?.url ?? draft?.url ?? '')
+  const isRecipe = c === 'recette'
   const input = useRef<HTMLInputElement>(null)
   const meta = cat(c)
 
-  useEffect(() => { if (!edit) setTimeout(() => input.current?.focus(), 400) }, [edit])
+  useEffect(() => { if (!edit && c !== 'recette') setTimeout(() => input.current?.focus(), 400) }, [edit, c])
   useEffect(() => {
     if (edit || saved) return
-    onDraft?.(title.trim() || where.trim() || note.trim() ? { c, title, where, note, place, poster } : null)
-  }, [c, title, where, note, place, poster, edit, saved, onDraft])
+    onDraft?.(title.trim() || where.trim() || note.trim() || url.trim() || ings.trim() ? { c, title, where, note, place, poster, url, ings, steps } : null)
+  }, [c, title, where, note, place, poster, url, ings, steps, edit, saved, onDraft])
+
+  /** Lit la recette derrière un lien et remplit ce qui est encore vide. */
+  const read = async (link: string) => {
+    lastUrl.current = link
+    setReading('busy')
+    try {
+      const r = await importRecipe(link)
+      if (lastUrl.current !== link) return
+      setTitle((t) => t.trim() || r.title || '')
+      if (r.image) setPoster((p) => p || r.image)
+      if (r.ingredients.length) setIngs((x) => x.trim() || r.ingredients.join('\n'))
+      if (r.steps.length) setSteps((x) => x.trim() || r.steps.join('\n'))
+      setReading(r.ingredients.length ? 'ok' : 'partial')
+      if (!r.ingredients.length) setPasting(true)
+    } catch {
+      if (lastUrl.current === link) { setReading('fail'); setPasting(true) }
+    }
+  }
+  const onUrl = (v: string) => {
+    const link = findUrl(v) ?? v
+    setUrl(link)
+    if (findUrl(link) && link !== lastUrl.current) read(link)
+  }
+  const pasteLink = async () => {
+    try { onUrl(await navigator.clipboard.readText()) } catch { document.getElementById('f-url')?.focus() }
+  }
+  const onPasteText = (t: string) => {
+    const p = parseRecipeText(t)
+    if (p.ingredients.length) setIngs(p.ingredients.join('\n'))
+    if (p.steps.length) setSteps(p.steps.join('\n'))
+    if (!title.trim()) setTitle(t.split('\n')[0].replace(/#\S+/g, '').trim().slice(0, 60))
+    if (p.ingredients.length) setPasting(false)
+  }
 
   useEffect(() => {
     setSugg([])
-    if (picked || title.trim().length < 3 || c === 'todo') return
+    if (picked || title.trim().length < 3 || c === 'todo' || c === 'recette') return
     const ctrl = new AbortController()
     const t = setTimeout(async () => {
       try {
@@ -90,10 +132,17 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
       lat: undefined, lng: undefined, address: undefined, poster: undefined,
       ...(meta.place ? geo : {}),
       ...(poster && !meta.place ? { poster } : {}),
+      url: undefined, ingredients: undefined, steps: undefined,
+      ...(isRecipe ? {
+        url: url.trim() || undefined,
+        ingredients: lines(ings),
+        steps: lines(steps),
+      } : {}),
     }
     setTimeout(() => { store.upsert(item); onDone(item) }, 520)
   }
 
+  const lines = (t: string) => { const xs = t.split('\n').map((x) => x.trim()).filter(Boolean); return xs.length ? xs : undefined }
   const whereLabel = meta.place ? 'Quartier' : c === 'todo' ? 'Quand ?' : 'Où le regarder ?'
   const wherePh = meta.place ? 'Ex. 11e, Canal Saint-Martin' : c === 'todo' ? 'Ex. ce week-end' : 'Ex. Netflix, au cinéma'
 
@@ -112,7 +161,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
     <div className="add">
       <h2 className="sheet-title">{edit ? 'Modifier' : 'Nouvelle idée'}</h2>
       {fromDraft && (
-        <button className="draft-clear" onClick={() => { setFromDraft(false); setTitle(''); setWhere(''); setNote(''); setPlace(null); setPoster(undefined); setPicked(false) }}>
+        <button className="draft-clear" onClick={() => { setFromDraft(false); setTitle(''); setWhere(''); setNote(''); setPlace(null); setPoster(undefined); setPicked(false); setUrl(''); setIngs(''); setSteps(''); setReading('idle'); lastUrl.current = '' }}>
           Brouillon repris · Tout effacer
         </button>
       )}
@@ -124,11 +173,26 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
           </button>
         ))}
       </div>
+      {isRecipe && (
+        <div className="field">
+          <label htmlFor="f-url">Lien TikTok, Insta, Pinterest ou site</label>
+          <div className="url-row">
+            <input id="f-url" type="url" inputMode="url" autoComplete="off" placeholder="Colle le lien de la recette" value={url}
+              onChange={(e) => onUrl(e.target.value)} />
+            <button className="paste-btn" onClick={pasteLink}>Coller</button>
+          </div>
+          {reading === 'busy' && <p className="hint reading"><span className="spin" aria-hidden="true" />Je lis la recette{sourceName(url) ? ` sur ${sourceName(url)}` : ''}…</p>}
+          {reading === 'ok' && <p className="hint ok">Recette trouvée, vérifie et ajuste si besoin.</p>}
+          {reading === 'partial' && <p className="hint">Je n'ai trouvé que le titre et la photo. Colle la description pour récupérer les ingrédients.</p>}
+          {reading === 'fail' && <p className="hint">Je n'ai pas pu lire ce lien. Colle la description de la vidéo, je m'occupe du reste.</p>}
+          {poster && <img className="recipe-thumb" src={poster} alt="" />}
+        </div>
+      )}
       <div className="field">
-        <label htmlFor="f-title">{meta.place ? 'Nom ou adresse' : c === 'todo' ? 'Quoi ?' : 'Titre'}</label>
+        <label htmlFor="f-title">{meta.place ? 'Nom ou adresse' : c === 'todo' ? 'Quoi ?' : isRecipe ? 'Nom de la recette' : 'Titre'}</label>
         <input ref={input} id="f-title" autoComplete="off" value={title}
-          placeholder={meta.place ? 'Ex. ramen rue Sainte-Anne' : c === 'todo' ? 'Ex. réserver le resto pour son anniv' : 'Ex. Le Voyage de Chihiro'}
-          onChange={(e) => { setTitle(e.target.value); setPicked(false); setPlace(null); setPoster(edit?.poster) }} />
+          placeholder={meta.place ? 'Ex. ramen rue Sainte-Anne' : c === 'todo' ? 'Ex. réserver le resto pour son anniv' : isRecipe ? 'Ex. Pâtes crémeuses au citron' : 'Ex. Le Voyage de Chihiro'}
+          onChange={(e) => { setTitle(e.target.value); setPicked(false); setPlace(null); if (!isRecipe) setPoster(edit?.poster) }} />
         {sugg.length > 0 && (
           <ul className="sugg">
             {sugg.map((s, k) => (
@@ -154,13 +218,34 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
           </button>
         )}
       </div>
-      <div className="field">
-        <label htmlFor="f-where">{whereLabel}</label>
-        <input id="f-where" autoComplete="off" placeholder={wherePh} value={where} onChange={(e) => setWhere(e.target.value)} />
-      </div>
+      {isRecipe ? (
+        <>
+          {pasting ? (
+            <div className="field">
+              <label htmlFor="f-paste">Description de la vidéo ou texte de la recette</label>
+              <textarea id="f-paste" className="paste-box" placeholder="Colle ici, je range les ingrédients et les étapes" onChange={(e) => onPasteText(e.target.value)} />
+            </div>
+          ) : (
+            <button className="link-btn" onClick={() => setPasting(true)}>Coller le texte de la recette</button>
+          )}
+          <div className="field">
+            <label htmlFor="f-ings">Ingrédients <small>· un par ligne</small></label>
+            <textarea id="f-ings" className="lines" placeholder={'200 g de spaghetti\n1 citron'} value={ings} onChange={(e) => setIngs(e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="f-steps">Étapes <small>· une par ligne</small></label>
+            <textarea id="f-steps" className="lines" placeholder={'Cuire les pâtes\nMélanger la crème et le citron'} value={steps} onChange={(e) => setSteps(e.target.value)} />
+          </div>
+        </>
+      ) : (
+        <div className="field">
+          <label htmlFor="f-where">{whereLabel}</label>
+          <input id="f-where" autoComplete="off" placeholder={wherePh} value={where} onChange={(e) => setWhere(e.target.value)} />
+        </div>
+      )}
       <div className="field">
         <label htmlFor="f-note">Un petit mot</label>
-        <textarea id="f-note" placeholder="Pourquoi ça nous tente" value={note} onChange={(e) => setNote(e.target.value)} />
+        <textarea id="f-note" placeholder={isRecipe ? 'Une astuce, une envie' : 'Pourquoi ça nous tente'} value={note} onChange={(e) => setNote(e.target.value)} />
       </div>
       <button className={'primary' + (saved ? ' saved' : '')} disabled={!title.trim() || saved} onClick={save}>
         {saved ? (

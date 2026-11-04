@@ -3,6 +3,7 @@ import { avg, type Store } from '../store'
 import { directionsUrl, googleDirectionsUrl, wazeUrl } from '../search'
 import { burst, Hearts } from './ui'
 import { PlacePhotos } from './PlacePhotos'
+import { RecipeView } from './RecipeView'
 
 const Ic = ({ d, size = 18 }: { d: string; size?: number }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"
@@ -32,7 +33,7 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
 
   return (
     <div className="detail">
-      {item.poster && <img className="poster" src={item.poster} alt="" />}
+      {item.poster && <img className={'poster' + (item.cat === 'recette' ? ' wide' : '')} src={item.poster} alt="" />}
       <div className="detail-head">
         <h2 className="sheet-title">{item.title}</h2>
         <div className="meta">
@@ -43,6 +44,7 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
       </div>
       <PlacePhotos item={item} />
       {item.note && <p className="desc">{item.note}</p>}
+      {item.cat === 'recette' && <RecipeView item={item} store={store} toast={toast} />}
 
       {item.lat != null && item.lng != null && (
         <section className="block">

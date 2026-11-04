@@ -1,4 +1,4 @@
-export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo' | 'courses'
+export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo' | 'recette' | 'courses'
 export type Who = 'a' | 'b'
 
 export interface Item {
@@ -20,6 +20,10 @@ export interface Item {
   ra?: number
   rb?: number
   example?: boolean
+  /** Recettes : lien d'origine (TikTok, Insta, Pinterest, site), ingrédients et étapes */
+  url?: string
+  ingredients?: string[]
+  steps?: string[]
 
 }
 
