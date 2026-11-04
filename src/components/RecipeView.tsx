@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { newId, type Store } from '../store'
 import type { Item } from '../types'
-import { productKey, sourceName, toShopping } from '../recipe'
+import { parseRecipeText, productKey, sourceName, toShopping } from '../recipe'
 import { burst } from './ui'
 
 const CART = '<path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L21 8H6.3"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>'
@@ -12,7 +12,7 @@ const Ic = ({ d, size = 18 }: { d: string; size?: number }) => (
 
 /** Ingrédients (à envoyer sur la liste de courses), étapes à cocher et mode cuisine. */
 export function RecipeView({ item, store, toast }: { item: Item; store: Store; toast: (m: string, undo?: () => void) => void }) {
-  const { state, upsert, remove } = store
+  const { state, upsert, remove, patch } = store
   const ings = item.ingredients ?? []
   const steps = item.steps ?? []
   const shop = state.items.filter((i) => i.cat === 'courses' && !i.done)
@@ -54,6 +54,15 @@ export function RecipeView({ item, store, toast }: { item: Item; store: Store; t
         <a className="src-link" href={item.url} target="_blank" rel="noreferrer">
           <Ic d='<path d="M8 5.5v13l10-6.5z"/>' size={16} />Voir sur {sourceName(item.url)}
         </a>
+      )}
+
+      {!ings.length && !!item.note && (
+        <button className="go-btn" onClick={() => {
+          const p = parseRecipeText(item.note!)
+          if (!p.ingredients.length && !p.steps.length) { toast('Pas d’ingrédients trouvés, ajoute-les avec Modifier'); return }
+          patch(item.id, { ingredients: p.ingredients, steps: p.steps.length ? p.steps : item.steps })
+          toast('Recette rangée')
+        }}>Ranger la description en ingrédients et étapes</button>
       )}
 
       {!!ings.length && (
