@@ -73,7 +73,46 @@ export const AISLES: { id: string; label: string; emoji: string; words: string[]
     'papier cuisson', 'papier alu', 'aluminium', 'sac congelation', 'ampoule', 'pile', 'bougie', 'allumette', 'litiere', 'croquette',
   ] },
 ]
+/** Rayons de la liste « Achats » : tout ce qu'on achète pour la maison, hors courses. */
+export const SHOP: { id: string; label: string; emoji: string; words: string[] }[] = [
+  { id: 'electro', label: 'Électroménager', emoji: '🔌', words: [
+    'frigo', 'refrigerateur', 'congelateur', 'lave linge', 'machine a laver', 'seche linge', 'lave vaisselle', 'four', 'micro ondes', 'plaque', 'hotte',
+    'aspirateur', 'robot', 'mixeur', 'blender', 'airfryer', 'friteuse', 'cafetiere', 'machine a cafe', 'expresso', 'bouilloire', 'grille pain', 'toaster',
+    'centrifugeuse', 'extracteur', 'cuiseur', 'autocuiseur', 'cookeo', 'thermomix', 'yaourtiere', 'gaufrier', 'appareil', 'fer a repasser', 'centrale vapeur',
+    'defroisseur', 'seche cheveux', 'lisseur', 'climatiseur', 'ventilateur', 'radiateur', 'chauffage', 'deshumidificateur', 'purificateur', 'balance',
+  ] },
+  { id: 'meubles', label: 'Meubles', emoji: '🛋️', words: [
+    'meuble', 'canape', 'fauteuil', 'pouf', 'lit', 'sommier', 'matelas', 'tete de lit', 'table', 'table basse', 'table de nuit', 'chevet', 'chaise', 'tabouret',
+    'banc', 'bureau', 'armoire', 'dressing', 'penderie', 'commode', 'etagere', 'bibliotheque', 'buffet', 'console', 'meuble tv', 'vaisselier', 'rangement',
+    'caisson', 'portant', 'porte manteau', 'meuble a chaussures', 'transat', 'salon de jardin',
+  ] },
+  { id: 'deco', label: 'Déco', emoji: '🪴', words: [
+    'deco', 'lampe', 'luminaire', 'suspension', 'applique', 'lampadaire', 'guirlande', 'miroir', 'cadre', 'tableau', 'affiche', 'poster', 'tapis', 'rideau',
+    'voilage', 'store', 'coussin', 'plaid', 'vase', 'plante', 'cache pot', 'pot', 'horloge', 'bougeoir', 'diffuseur', 'statue', 'panier', 'corbeille',
+  ] },
+  { id: 'linge', label: 'Linge de maison', emoji: '🛏️', words: [
+    'drap', 'housse', 'housse de couette', 'couette', 'oreiller', 'traversin', 'taie', 'parure', 'protege matelas', 'serviette', 'drap de bain', 'peignoir',
+    'nappe', 'torchon', 'tablier', 'gant de toilette', 'tapis de bain',
+  ] },
+  { id: 'cuisine', label: 'Cuisine et vaisselle', emoji: '🍳', words: [
+    'poele', 'casserole', 'cocotte', 'faitout', 'wok', 'couteau', 'planche a decouper', 'planche', 'assiette', 'bol', 'verre', 'tasse', 'mug', 'couverts',
+    'fourchette', 'cuillere', 'saladier', 'plat', 'ustensile', 'spatule', 'louche', 'fouet', 'passoire', 'rape', 'moule', 'boite', 'tupperware', 'gourde',
+    'thermos', 'carafe', 'theiere', 'egouttoir', 'poubelle', 'rouleau', 'balance de cuisine',
+  ] },
+  { id: 'tech', label: 'High-tech', emoji: '📱', words: [
+    'tv', 'tele', 'television', 'ecran', 'enceinte', 'barre de son', 'casque', 'ecouteur', 'airpods', 'ordinateur', 'pc', 'mac', 'tablette', 'ipad',
+    'telephone', 'iphone', 'chargeur', 'cable', 'batterie', 'console', 'manette', 'jeu', 'imprimante', 'cartouche', 'routeur', 'box', 'disque dur', 'cle usb',
+    'clavier', 'souris', 'montre', 'camera', 'appareil photo', 'projecteur', 'videoprojecteur', 'ampoule connectee', 'prise connectee', 'multiprise',
+  ] },
+  { id: 'brico', label: 'Bricolage et jardin', emoji: '🔧', words: [
+    'perceuse', 'visseuse', 'outil', 'boite a outils', 'tournevis', 'marteau', 'cle', 'pince', 'scie', 'metre', 'niveau', 'vis', 'cheville', 'clou', 'colle',
+    'scotch', 'peinture', 'pinceau', 'rouleau de peinture', 'echelle', 'escabeau', 'ampoule', 'interrupteur', 'serrure', 'joint', 'silicone', 'terreau',
+    'graines', 'arrosoir', 'tuyau', 'secateur', 'tondeuse', 'barbecue',
+  ] },
+]
 export const OTHER = { id: 'autre', label: 'Autre', emoji: '🛍️' }
+export type List = 'courses' | 'achats'
+export const aislesFor = (l: List) => (l === 'achats' ? SHOP : AISLES)
 
 // mots qui ne disent rien du produit
 const SKIP = new Set(['de', 'd', 'du', 'des', 'la', 'le', 'les', 'l', 'un', 'une', 'et', 'ou', 'au', 'aux', 'a', 'en', 'pour', 'avec', 'sans', 'bio', 'gros', 'grosse',
@@ -87,13 +126,32 @@ export const norm = (s: string) => s.toLowerCase().replace(/œ/g, 'oe').replace(
 // un mot du dictionnaire trouve ses pluriels et accords : tomate → tomates, frais → fraiche
 const fits = (word: string, key: string) => word === key || (word.startsWith(key) && word.length <= key.length + 3)
 
-const INDEX = AISLES.flatMap((a) => a.words.map((w) => ({ id: a.id, keys: norm(w).split(' ').filter((k) => !SKIP.has(k)) })))
+// un mot du dictionnaire qui ne garde aucun mot utile (« pot », « boîte ») se garde tel quel, sinon il attraperait tout
+const index = (xs: typeof AISLES) => xs.flatMap((a) => a.words.map((w) => {
+  const all = norm(w).split(' ')
+  const keys = all.filter((k) => !SKIP.has(k))
+  return { id: a.id, keys: keys.length ? keys : all }
+}))
+const INDEX = { courses: index(AISLES), achats: index(SHOP) }
+
+// rayons choisis à la main, retenus sur ce téléphone pour la prochaine fois
+const LEARN_KEY = 'toh-aisle-learn'
+const learned = (): Record<string, string> => { try { return JSON.parse(localStorage.getItem(LEARN_KEY) || '{}') } catch { return {} } }
+const keyOf = (title: string) => norm(title).split(' ').filter((w) => w && !/^\d/.test(w) && !SKIP.has(w)).join(' ')
+export function learn(list: List, title: string, aisle: string) {
+  const m = learned()
+  m[list + ':' + keyOf(title)] = aisle
+  try { localStorage.setItem(LEARN_KEY, JSON.stringify(m)) } catch {}
+}
+export const learnedAisle = (list: List, title: string) => learned()[list + ':' + keyOf(title)]
 
 /** Rayon d'un article (« Potiron (500 g) », « 2 gousses d'ail », « Jus de citron »…). */
-export function aisleOf(title: string) {
-  const words = norm(title).split(' ').filter((w) => w && !/^\d/.test(w) && !SKIP.has(w))
+export function aisleOf(title: string, list: List = 'courses') {
+  const raw = norm(title).split(' ').filter((w) => w && !/^\d/.test(w))
+  const kept = raw.filter((w) => !SKIP.has(w))
+  const words = kept.length ? kept : raw
   let best: { id: string; size: number; pos: number; len: number } | null = null
-  for (const e of INDEX) {
+  for (const e of INDEX[list]) {
     for (let i = 0; i + e.keys.length <= words.length; i++) {
       if (!e.keys.every((k, j) => fits(words[i + j], k))) continue
       // les expressions longues gagnent, puis le mot le plus à gauche (le produit vient en premier en français),

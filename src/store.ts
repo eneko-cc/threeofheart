@@ -35,7 +35,7 @@ export const avg = (i: Item) => {
 }
 
 /** Une envie, par opposition à un article de la liste de courses */
-export const isIdea = (i: Item) => i.cat !== 'courses'
+export const isIdea = (i: Item) => i.cat !== 'courses' && i.cat !== 'achats'
 
 export const newId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
 

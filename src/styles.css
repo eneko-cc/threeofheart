@@ -809,3 +809,27 @@ textarea.lines { min-height: 120px; line-height: 1.6; }
 .hrow .h-fill { position: absolute; color: var(--accent); clip-path: inset(0 50% 0 0); animation: hpop 0.45s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
 .hval { min-width: 34px; margin-left: 4px; font-weight: 800; font-size: 17px; color: var(--fg); }
 .hearts-tip { text-align: center; margin: -2px 0 0; }
+
+/* ---------- Listes courses / achats ---------- */
+.seg.lists button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px; }
+.seg.lists button i { font-style: normal; font-size: 12px; font-weight: 800; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 99px;
+  display: inline-grid; place-items: center; background: var(--accent); color: var(--fir-ink); animation: hpop 0.35s cubic-bezier(0.3, 1.8, 0.5, 1); }
+.list-body { display: flex; flex-direction: column; gap: 14px; animation: list-in 0.35s cubic-bezier(0.3, 1.2, 0.5, 1) both; }
+@keyframes list-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.buy .row-body { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+.buy.press .row-body { transform: scale(0.97); transition: transform 0.45s ease; }
+
+.mover { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; }
+.mover-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); animation: fadein 0.2s both; }
+.mover-card { position: relative; width: 100%; max-width: 560px; background: var(--bg); color: var(--fg); border-radius: 28px 28px 0 0;
+  padding: 20px 18px calc(18px + var(--sab, 0px)); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25); animation: mover-up 0.4s cubic-bezier(0.3, 1.2, 0.5, 1) both; }
+@keyframes mover-up { from { transform: translateY(100%); } to { transform: none; } }
+.mover-title { margin: 0 0 14px; font-size: 17px; color: var(--muted); font-weight: 600; }
+.mover-title b { color: var(--fg); }
+.mover-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mover-opt { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-height: 52px; border-radius: 16px; background: var(--surface); color: var(--fg);
+  font-weight: 600; font-size: 15px; text-align: left; border: 2px solid transparent; transition: transform 0.15s, border-color 0.2s; }
+.mover-opt span { font-size: 20px; }
+.mover-opt.on { border-color: var(--accent); }
+.mover-opt:active { transform: scale(0.95); }
+.mover-cancel { width: 100%; margin-top: 12px; padding: 14px; border-radius: 16px; background: var(--surface-2); color: var(--fg); font-weight: 700; }

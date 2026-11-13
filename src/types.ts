@@ -1,4 +1,4 @@
-export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo' | 'recette' | 'courses'
+export type CatId = 'activite' | 'resto' | 'event' | 'film' | 'serie' | 'todo' | 'recette' | 'courses' | 'achats'
 export type Who = 'a' | 'b'
 
 export interface Item {
@@ -26,6 +26,8 @@ export interface Item {
   steps?: string[]
   /** Recettes : description courte, portions et temps */
   intro?: string
+  /** Courses et achats : rayon choisi à la main */
+  aisle?: string
   serves?: string
   time?: string
 

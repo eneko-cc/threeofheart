@@ -35,7 +35,10 @@ export const CATS: Cat[] = [
 export const COURSES: Cat = { id: 'courses', label: 'Courses', plural: 'Courses', bg: 'var(--hero)', ink: 'var(--hero-ink)', pin: 'var(--accent)', place: false,
   icon: '<path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L21 8H6.3"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>' }
 
-export const cat = (id: CatId) => CATS.find((c) => c.id === id) ?? COURSES
+export const ACHATS: Cat = { ...COURSES, id: 'achats', label: 'Achats', plural: 'Achats',
+  icon: '<path d="M4 11V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v4H3z"/><path d="M5 17v2M19 17v2"/>' }
+
+export const cat = (id: CatId) => CATS.find((c) => c.id === id) ?? (id === 'achats' ? ACHATS : COURSES)
 
 export function CatIcon({ id, size = 22 }: { id: CatId; size?: number }) {
   return (

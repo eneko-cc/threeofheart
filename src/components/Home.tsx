@@ -15,6 +15,7 @@ export function Home({ store, onOpen, onCheck, onCat, onYesNo, onCourses }: {
   const todo = state.items.filter((i) => isIdea(i) && !i.done)
   const latest = [...todo].sort((a, b) => b.createdAt - a.createdAt).slice(0, 4)
   const buy = state.items.filter((i) => i.cat === 'courses' && !i.done).sort((a, b) => b.createdAt - a.createdAt)
+  const shop = state.items.filter((i) => i.cat === 'achats' && !i.done).length
   const count = (c: CatId) => todo.filter((i) => i.cat === c).length
 
   return (
@@ -29,10 +30,12 @@ export function Home({ store, onOpen, onCheck, onCat, onYesNo, onCourses }: {
       <button className="shop-card" onClick={onCourses}>
         <span className="shop-ic"><CatIcon id={COURSES.id} size={24} /></span>
         <span className="shop-txt">
-          <b>Courses</b>
-          <span>{buy.length ? buy.slice(0, 3).map((i) => i.title).join(', ') + (buy.length > 3 ? '…' : '') : 'Rien à acheter pour l’instant'}</span>
+          <b>Courses{shop ? ' et achats' : ''}</b>
+          <span>{shop
+            ? `${buy.length} course${buy.length > 1 ? 's' : ''} · ${shop} achat${shop > 1 ? 's' : ''}`
+            : buy.length ? buy.slice(0, 3).map((i) => i.title).join(', ') + (buy.length > 3 ? '…' : '') : 'Rien à acheter pour l’instant'}</span>
         </span>
-        <span className="shop-n" key={buy.length}>{buy.length || '+'}</span>
+        <span className="shop-n" key={buy.length + shop}>{buy.length + shop || '+'}</span>
       </button>
 
       <div className="section-head"><h2>Nos envies</h2></div>
