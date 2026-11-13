@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { cat, Heart } from '../cats'
 import { avg, isIdea, type Store } from '../store'
 import type { AppState } from '../types'
-import { CountUp } from './ui'
+import { CountUp, fmtNote } from './ui'
 import { getDesign, setDesign, type Design } from '../design'
 import { disablePush, enablePush, pushState, type PushState } from '../sync'
 
@@ -111,7 +111,7 @@ export function Us({ store, toast }: { store: Store; toast: Toast }) {
         <div className="best" style={{ background: cat(best.cat).bg, color: cat(best.cat).ink }}>
           <span className="tag">Notre coup de cœur</span>
           <b>{best.title}</b>
-          <span className="best-score"><Heart size={15} /> {avg(best).toFixed(1)} / 5</span>
+          <span className="best-score"><Heart size={15} /> {fmtNote(+avg(best).toFixed(2))} / 5</span>
         </div>
       )}
 

@@ -1,7 +1,7 @@
 import { CatIcon, cat } from '../cats'
 import { avg, type Store } from '../store'
 import { directionsUrl, googleDirectionsUrl, wazeUrl } from '../search'
-import { burst, Hearts } from './ui'
+import { burst, fmtNote, Hearts } from './ui'
 import { PlacePhotos } from './PlacePhotos'
 import { RecipeView } from './RecipeView'
 
@@ -72,7 +72,8 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
             </label>
             <div className="rate"><b>{state.names.a}</b><Hearts label={`Note de ${state.names.a}`} value={item.ra ?? 0} onChange={(n) => patch(id, { ra: n })} /></div>
             <div className="rate"><b>{state.names.b}</b><Hearts label={`Note de ${state.names.b}`} value={item.rb ?? 0} onChange={(n) => patch(id, { rb: n })} /></div>
-            <p className="avg">Moyenne <b>{a ? a.toFixed(1) : '–'}</b> / 5</p>
+            <p className="hint hearts-tip">Demi-cœur : touche la moitié gauche.</p>
+            <p className="avg">Moyenne <b>{a ? fmtNote(+a.toFixed(2)) : '–'}</b> / 5</p>
           </section>
           <button className="ghost" onClick={() => {
             const before = item

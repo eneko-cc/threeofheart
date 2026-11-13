@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { CatIcon, cat, Heart, HEART_PATH } from '../cats'
 import { avg } from '../store'
 import type { AppState, Item } from '../types'
@@ -75,20 +75,37 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
   )
 }
 
+/** Note sur 5 avec demi-cœurs : la moitié gauche d'un cœur donne la demi-note, retoucher un cœur plein le coupe en deux. */
 export function Hearts({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
+  const pick = (n: number, e: MouseEvent<HTMLButtonElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const left = e.clientX > 0 && e.clientX < r.left + r.width / 2
+    let v = left ? n - 0.5 : n
+    if (!left && v === value) v = n - 0.5
+    onChange(v)
+    burst(e.currentTarget, v === 5 ? 16 : 5)
+  }
   return (
     <div className="hrow" role="radiogroup" aria-label={label}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button key={n + '-' + (n <= value ? 'on' : 'off')} role="radio" aria-checked={n === value} className={n <= value ? 'on' : ''}
-          style={{ animationDelay: `${(n - 1) * 45}ms` }}
-          aria-label={`${n} cœur${n > 1 ? 's' : ''}`}
-          onClick={(e) => { onChange(n); burst(e.currentTarget, n === 5 ? 16 : 5) }}>
-          <Heart size={28} />
-        </button>
-      ))}
+      {[1, 2, 3, 4, 5].map((n) => {
+        const st = value >= n ? 'on' : value >= n - 0.5 ? 'half' : ''
+        return (
+          <button key={n + '-' + st} role="radio" aria-checked={value === n || value === n - 0.5} className={st}
+            style={{ animationDelay: `${(n - 1) * 45}ms` }}
+            aria-label={`${n} cœur${n > 1 ? 's' : ''}`}
+            onClick={(e) => pick(n, e)}>
+            <Heart size={28} />
+            {st === 'half' && <Heart size={28} className="h-fill" />}
+          </button>
+        )
+      })}
+      <span className="hval" aria-hidden="true">{value ? fmtNote(value) : ''}</span>
     </div>
   )
 }
+
+/** 4.5 → « 4,5 », 4 → « 4 » */
+export const fmtNote = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.', ','))
 
 /** Carte d'idée ; on la glisse vers la droite pour dire « c'est fait ». */
 export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
@@ -169,8 +186,8 @@ export function ItemCard({ item, state, onOpen, onCheck, index = 0 }: {
         </button>
         {item.done ? (
           a ? (
-            <span className="card-score" aria-label={`Moyenne ${a.toFixed(1)} sur 5`}>
-              <Heart size={14} /> {a.toFixed(1)}
+            <span className="card-score" aria-label={`Moyenne ${fmtNote(+a.toFixed(1))} sur 5`}>
+              <Heart size={14} /> {fmtNote(+a.toFixed(1))}
             </span>
           ) : <span className="card-score todo-rate">À noter</span>
         ) : onCheck ? (

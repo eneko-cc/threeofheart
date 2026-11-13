@@ -803,3 +803,9 @@ textarea.lines { min-height: 120px; line-height: 1.6; }
 .recipe-intro .meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .find-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
 .find-btn .spin { border-color: currentColor; border-top-color: transparent; }
+.hrow { align-items: center; }
+.hrow button { position: relative; }
+.hrow button.half { color: var(--line); }
+.hrow .h-fill { position: absolute; color: var(--accent); clip-path: inset(0 50% 0 0); animation: hpop 0.45s cubic-bezier(0.3, 1.8, 0.5, 1) both; }
+.hval { min-width: 34px; margin-left: 4px; font-weight: 800; font-size: 17px; color: var(--fg); }
+.hearts-tip { text-align: center; margin: -2px 0 0; }
