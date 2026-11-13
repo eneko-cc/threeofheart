@@ -87,7 +87,7 @@ export function AddSheet({ store, initialCat, edit, draft, onDraft, onDone }: {
     const t = setTimeout(async () => {
       try {
         if (meta.place) {
-          const ps = await searchPlaces(title.trim(), ctrl.signal, { food: c === 'resto' })
+          const ps = await searchPlaces(title.trim(), ctrl.signal, { food: c === 'resto' || c === 'gouter' })
           setSugg(ps.map((p) => ({ kind: 'place', p })))
         } else {
           const ws = await searchWorks(title.trim(), c as 'film' | 'serie', ctrl.signal)

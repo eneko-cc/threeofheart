@@ -17,6 +17,8 @@ export interface Cat {
 export const CATS: Cat[] = [
   { id: 'resto', label: 'Resto', plural: 'Restos', bg: 'var(--bg-resto)', ink: 'var(--ink-resto)', pin: 'var(--pin-resto)', place: true,
     icon: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2.5-3 6s1 4 3 4v8"/>' },
+  { id: 'gouter', label: 'Goûter & café', plural: 'Goûters & cafés', bg: 'var(--bg-gouter)', ink: 'var(--ink-gouter)', pin: 'var(--pin-gouter)', place: true,
+    icon: '<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17M8 3.5c-.6.8-.6 1.7 0 2.5M12 3.5c-.6.8-.6 1.7 0 2.5"/>' },
   { id: 'activite', label: 'Activité', plural: 'Activités', bg: 'var(--bg-activite)', ink: 'var(--ink-activite)', pin: 'var(--pin-activite)', place: true,
     icon: '<path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6L12 15.5 7 18.3l1.2-5.6L4 8.9l5.6-.6z"/>' },
   { id: 'event', label: 'Événement', plural: 'Événements', bg: 'var(--bg-event)', ink: 'var(--ink-event)', pin: 'var(--pin-event)', place: true,

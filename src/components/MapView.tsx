@@ -125,7 +125,7 @@ export function MapView({ store, active, onOpen }: { store: Store; active: boole
     <div className="mapwrap">
       <div ref={box} className="map" />
       <div className="map-top">
-        <Chips value={filter} onChange={(f) => { setFilter(f); setSel(null) }} only={['resto', 'activite', 'event']} />
+        <Chips value={filter} onChange={(f) => { setFilter(f); setSel(null) }} only={['resto', 'gouter', 'activite', 'event']} />
         <div className="status" role="group" aria-label="Afficher">
           <button aria-pressed={status === 'todo'} onClick={() => { setStatus('todo'); setSel(null) }}><span className="lg heart" />À tester</button>
           <button aria-pressed={status === 'all'} onClick={() => { setStatus('all'); setSel(null) }}>Tous</button>

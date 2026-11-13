@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { CatIcon, cat } from '../cats'
 import { avg, type Store } from '../store'
 import { directionsUrl, googleDirectionsUrl, wazeUrl } from '../search'
@@ -26,8 +27,26 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
   store: Store; id: string; onClose: () => void; toast: (m: string, undo?: () => void) => void; onYesNo: (q: string) => void; onEdit: () => void
 }) {
   const { state, patch, remove, upsert } = store
-  const item = state.items.find((i) => i.id === id)
-  if (!item) return null
+  // les notes restent en brouillon tant que la fiche est ouverte : une seule mise à jour (et une seule notification) à la fermeture
+  const [rates, setRates] = useState<{ ra?: number; rb?: number }>({})
+  const pending = useRef(rates)
+  pending.current = rates
+  useEffect(() => {
+    const flush = () => {
+      const r = pending.current
+      if (r.ra === undefined && r.rb === undefined) return
+      patch(id, r)
+      pending.current = {}
+      setRates({})
+    }
+    // l'app passée en arrière-plan compte comme une fermeture, pour ne rien perdre
+    const hide = () => { if (document.visibilityState === 'hidden') flush() }
+    document.addEventListener('visibilitychange', hide)
+    return () => { document.removeEventListener('visibilitychange', hide); flush() }
+  }, [id, patch])
+  const found = state.items.find((i) => i.id === id)
+  if (!found) return null
+  const item = { ...found, ...rates }
   const c = cat(item.cat)
   const a = avg(item)
 
@@ -70,14 +89,14 @@ export function Detail({ store, id, onClose, toast, onYesNo, onEdit }: {
               <input type="date" value={dayValue(item.doneAt ?? Date.now())} max={dayValue(Date.now())}
                 onChange={(e) => { if (e.target.value) patch(id, { doneAt: new Date(e.target.value + 'T12:00').getTime() }) }} />
             </label>
-            <div className="rate"><b>{state.names.a}</b><Hearts label={`Note de ${state.names.a}`} value={item.ra ?? 0} onChange={(n) => patch(id, { ra: n })} /></div>
-            <div className="rate"><b>{state.names.b}</b><Hearts label={`Note de ${state.names.b}`} value={item.rb ?? 0} onChange={(n) => patch(id, { rb: n })} /></div>
+            <div className="rate"><b>{state.names.a}</b><Hearts label={`Note de ${state.names.a}`} value={item.ra ?? 0} onChange={(n) => setRates((r) => ({ ...r, ra: n }))} /></div>
+            <div className="rate"><b>{state.names.b}</b><Hearts label={`Note de ${state.names.b}`} value={item.rb ?? 0} onChange={(n) => setRates((r) => ({ ...r, rb: n }))} /></div>
             <p className="hint hearts-tip">Demi-cœur : touche la moitié gauche.</p>
             <p className="avg">Moyenne <b>{a ? fmtNote(+a.toFixed(2)) : '–'}</b> / 5</p>
           </section>
           <button className="ghost" onClick={() => {
             const before = item
-            patch(id, { done: false, doneAt: undefined, ra: undefined, rb: undefined }); onClose()
+            pending.current = {}; setRates({}); patch(id, { done: false, doneAt: undefined, ra: undefined, rb: undefined }); onClose()
             toast('Remis dans « À faire »', () => upsert(before))
           }}>
             Remettre dans « À faire »

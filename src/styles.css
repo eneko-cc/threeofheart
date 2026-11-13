@@ -33,10 +33,10 @@
   --heart: #E58AA5; --done: #1F4D3A; --done-ink: #FFFFFF;
   --toast: #16302A; --toast-ink: #FFFFFF; --toast-heart: #F4B6C8;
   --w-yes: #6DB58A; --w-yes2: #CDE8D6; --w-yes-ink: #16302A; --w-no: #E58AA5; --w-no2: #F8C9D6; --w-no-ink: #16302A; --w-yes-ink2: #3E8A60; --w-no-ink2: #C9617F;
-  --pin-resto: #E58AA5; --pin-activite: #6DB58A; --pin-event: #E2B23C; --pin-film: #6FA3CF; --pin-serie: #9C8CD6; --pin-todo: #1F4D3A; --pin-recette: #E58AA5; --pin-done: #1F4D3A;
+  --pin-resto: #E58AA5; --pin-activite: #6DB58A; --pin-event: #E2B23C; --pin-film: #6FA3CF; --pin-serie: #9C8CD6; --pin-todo: #1F4D3A; --pin-recette: #E58AA5; --pin-gouter: #B07A4F; --pin-done: #1F4D3A;
   --s1: #B9D6EF; --s2: #F4B6C8; --s3: #1F4D3A;
-  --bg-resto: var(--c-pink); --bg-activite: var(--c-mint); --bg-event: var(--c-butter); --bg-film: var(--c-blue); --bg-serie: var(--c-lilac); --bg-todo: var(--c-sand); --bg-recette: var(--c-pink);
-  --ink-resto: var(--card-ink); --ink-activite: var(--card-ink); --ink-event: var(--card-ink); --ink-film: var(--card-ink); --ink-serie: var(--card-ink); --ink-todo: var(--card-ink); --ink-recette: var(--card-ink);
+  --bg-resto: var(--c-pink); --bg-activite: var(--c-mint); --bg-event: var(--c-butter); --bg-film: var(--c-blue); --bg-serie: var(--c-lilac); --bg-todo: var(--c-sand); --bg-recette: var(--c-pink); --bg-gouter: var(--c-butter);
+  --ink-resto: var(--card-ink); --ink-activite: var(--card-ink); --ink-event: var(--card-ink); --ink-film: var(--card-ink); --ink-serie: var(--card-ink); --ink-todo: var(--card-ink); --ink-recette: var(--card-ink); --ink-gouter: var(--card-ink);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -547,7 +547,8 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --bg-serie: #FEB3A9;    --ink-serie: #5A0F2A;
   --bg-todo: #BAC664;     --ink-todo: #2F3510;
   --bg-recette: #8C1D40;  --ink-recette: #FFF6F1;
-  --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-recette: #8C1D40; --pin-done: #3B0F22;
+  --bg-gouter: #B5713F;   --ink-gouter: #FFF6F1;
+  --pin-resto: #DE3566; --pin-activite: #72BA2C; --pin-event: #F2B230; --pin-film: #FA610E; --pin-serie: #FD6585; --pin-todo: #888625; --pin-recette: #8C1D40; --pin-gouter: #B5713F; --pin-done: #3B0F22;
 }
 :root[data-design='v2'] .brand-title { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 900; font-size: clamp(42px, 12.6vw, 56px); letter-spacing: -0.01em; color: #DE3566; }
 :root[data-design] .big { font-weight: 800; }
@@ -603,7 +604,8 @@ html.sheet-open .toast.on { transform: translate(-50%, 0); }
   --bg-serie: #8FB4FF;    --ink-serie: #001A63;
   --bg-todo: #2FBF71;     --ink-todo: #002A12;
   --bg-recette: #FF5A5F;  --ink-recette: #2A0005;
-  --pin-resto: #EF8E01; --pin-activite: #C8F135; --pin-event: #FFD43B; --pin-film: #EEEEEE; --pin-serie: #8FB4FF; --pin-todo: #2FBF71; --pin-recette: #FF5A5F; --pin-done: #001A63; --pin-done-ink: #C8F135;
+  --bg-gouter: #FF9ED2;   --ink-gouter: #3A0021;
+  --pin-resto: #EF8E01; --pin-activite: #C8F135; --pin-event: #FFD43B; --pin-film: #EEEEEE; --pin-serie: #8FB4FF; --pin-todo: #2FBF71; --pin-recette: #FF5A5F; --pin-gouter: #FF9ED2; --pin-done: #001A63; --pin-done-ink: #C8F135;
 }
 :root[data-design='v1'] .brand-title { font-weight: 900; letter-spacing: -0.045em; color: #C8F135; }
 :root[data-design='v1'] .section-head h2, :root[data-design='v1'] h1.big:not(.brand-title) { color: #FFFFFF; }
